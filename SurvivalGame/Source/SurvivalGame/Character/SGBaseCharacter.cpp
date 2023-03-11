@@ -2,11 +2,15 @@
 
 
 #include "SGBaseCharacter.h"
+#include "SurvivalGame/Components/Character/SGCharacterMovementComponent.h"
 
 
-ASGBaseCharacter::ASGBaseCharacter()
+ASGBaseCharacter::ASGBaseCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<USGCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	SGCharacterMovementComponent = Cast<USGCharacterMovementComponent>(GetCharacterMovement());
 
 }
 

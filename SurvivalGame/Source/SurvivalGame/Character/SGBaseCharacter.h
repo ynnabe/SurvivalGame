@@ -7,19 +7,23 @@
 #include "InputActionValue.h"
 #include "SGBaseCharacter.generated.h"
 
+class USGCharacterMovementComponent;
 UCLASS()
 class SURVIVALGAME_API ASGBaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	ASGBaseCharacter();
+	ASGBaseCharacter(const FObjectInitializer& ObjectInitializer);
 
 	virtual void Move(const FInputActionValue& Value) {};
 	virtual void Look(const FInputActionValue& Value) {};
 
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components")
+	USGCharacterMovementComponent* SGCharacterMovementComponent;
 
 public:	
 	virtual void Tick(float DeltaTime) override;
