@@ -7,6 +7,7 @@
 #include "SurvivalGame/Character/SGBaseCharacter.h"
 #include "SGPlayerController.generated.h"
 
+class USGPlayerWidget;
 class UInputAction;
 class UInputMappingContext;
 
@@ -45,7 +46,15 @@ protected:
 	void JumpPressed();
 	void JumpReleased();
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widgets")
+	TSubclassOf<USGPlayerWidget> PlayerHUDWidgetClass;
+
 private:
+
+	void CreateAndInitializeWidgets();
+
+	UPROPERTY()
+	USGPlayerWidget* PlayerHUDWidget = nullptr;
 
 	TWeakObjectPtr<ASGBaseCharacter> CachedBaseCharacter;
 	

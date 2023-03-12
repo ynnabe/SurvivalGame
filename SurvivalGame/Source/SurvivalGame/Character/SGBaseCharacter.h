@@ -20,6 +20,8 @@ public:
 	virtual void Move(const FInputActionValue& Value) {};
 	virtual void Look(const FInputActionValue& Value) {};
 
+	FORCEINLINE USGCharacterAttributes* GetCharacterAttributes() const { return SGCharacterAttributes; }
+
 protected:
 	virtual void BeginPlay() override;
 

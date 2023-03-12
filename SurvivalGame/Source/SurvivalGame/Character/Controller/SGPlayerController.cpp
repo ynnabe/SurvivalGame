@@ -6,12 +6,18 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "SurvivalGame/Character/SGBaseCharacter.h"
+#include "SurvivalGame/UI/SGCharacterAttributesWidget.h"
+#include "SurvivalGame/UI/SGPlayerWidget.h"
 
 void ASGPlayerController::SetPawn(APawn* InPawn)
 {
 	Super::SetPawn(InPawn);
 
 	CachedBaseCharacter = Cast<ASGBaseCharacter>(InPawn);
+	if(CachedBaseCharacter.IsValid())
+	{
+		CreateAndInitializeWidgets();
+	}
 }
 
 void ASGPlayerController::OnPossess(APawn* InPawn)
@@ -71,4 +77,25 @@ void ASGPlayerController::JumpPressed()
 void ASGPlayerController::JumpReleased()
 {
 	CachedBaseCharacter->StopJumping();
+}
+
+void ASGPlayerController::CreateAndInitializeWidgets()
+{
+	if(!IsValid(PlayerHUDWidget))
+	{
+		PlayerHUDWidget = CreateWidget<USGPlayerWidget>(GetWorld(), PlayerHUDWidgetClass);
+		if(IsValid(PlayerHUDWidget))
+		{
+			PlayerHUDWidget->AddToViewport();
+		}
+	}
+
+	if(CachedBaseCharacter.IsValid() && IsValid((PlayerHUDWidget)))
+	{
+		USGCharacterAttributesWidget* AttributesWidget = PlayerHUDWidget->GetCharacterAttributesWidget();
+		if(IsValid(AttributesWidget))
+		{
+			AttributesWidget->BindDelegates(CachedBaseCharacter.Get());
+		}
+	}
 }

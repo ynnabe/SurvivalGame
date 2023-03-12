@@ -13,8 +13,30 @@ USGCharacterAttributes::USGCharacterAttributes()
 	// ...
 }
 
+void USGCharacterAttributes::SetHealth(float NewValue)
+{
+	Health = NewValue;
+	OnHealthChanged.Broadcast(Health / MaxHealth);
+}
 
-// Called when the game starts
+void USGCharacterAttributes::SetStamina(float NewValue)
+{
+	Stamina = NewValue;
+	OnStaminaChanged.Broadcast(Stamina / MaxStamina);
+}
+
+void USGCharacterAttributes::SetHungry(float NewValue)
+{
+	Hungry = NewValue;
+	OnHungryChanged.Broadcast(Hungry);
+}
+
+void USGCharacterAttributes::SetHydration(float NewValue)
+{
+	Hydration = NewValue;
+	OnHydrationChanged.Broadcast(Hydration);
+}
+
 void USGCharacterAttributes::BeginPlay()
 {
 	Super::BeginPlay();
@@ -28,12 +50,11 @@ void USGCharacterAttributes::BeginPlay()
 }
 
 
-// Called every frame
 void USGCharacterAttributes::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	
 }
 
 void USGCharacterAttributes::CalculateAttributes()

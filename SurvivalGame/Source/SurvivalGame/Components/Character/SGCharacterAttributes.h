@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "SGCharacterAttributes.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnAttributeChangeSignature, float);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SURVIVALGAME_API USGCharacterAttributes : public UActorComponent
@@ -16,21 +17,26 @@ public:
 	
 	USGCharacterAttributes();
 
+	FOnAttributeChangeSignature OnHealthChanged;
+	FOnAttributeChangeSignature OnStaminaChanged;
+	FOnAttributeChangeSignature OnHungryChanged;
+	FOnAttributeChangeSignature OnHydrationChanged;
+
 	FORCEINLINE float GetHealth() const { return Health; }
 	FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
-	void SetHealth(float NewValue) { Health = NewValue; }
+	void SetHealth(float NewValue);
 
 	FORCEINLINE float GetStamina() const { return Stamina; }
 	FORCEINLINE float GetMaxStamina() const { return MaxStamina; }
-	void SetStamina(float NewValue) { Stamina = NewValue; }
+	void SetStamina(float NewValue);
 
 	FORCEINLINE float GetHungry() const { return Hungry; }
 	FORCEINLINE float GetMaxHungry() const { return MaxHungry; }
-	void SetHungry(float NewValue) { Hungry = NewValue; }
+	void SetHungry(float NewValue);
 
 	FORCEINLINE float GetHydration() const { return Hydration; }
 	FORCEINLINE float GetMaxHydration() const { return MaxHydration; }
-	void SetHydration(float NewValue) { Hydration = NewValue; }
+	void SetHydration(float NewValue);
 
 protected:
 	
