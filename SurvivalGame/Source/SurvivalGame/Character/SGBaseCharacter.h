@@ -7,6 +7,7 @@
 #include "InputActionValue.h"
 #include "SGBaseCharacter.generated.h"
 
+class USGCharacterAttributes;
 class USGCharacterMovementComponent;
 UCLASS()
 class SURVIVALGAME_API ASGBaseCharacter : public ACharacter
@@ -24,6 +25,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components")
 	USGCharacterMovementComponent* SGCharacterMovementComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components")
+	USGCharacterAttributes* SGCharacterAttributes;
 
 public:	
 	virtual void Tick(float DeltaTime) override;
