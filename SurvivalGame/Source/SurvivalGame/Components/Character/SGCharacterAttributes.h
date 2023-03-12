@@ -38,6 +38,8 @@ public:
 	FORCEINLINE float GetMaxHydration() const { return MaxHydration; }
 	void SetHydration(float NewValue);
 
+	void SetCDStamina(bool NewValue) { bIsCDStamina = NewValue; }
+
 protected:
 	
 	virtual void BeginPlay() override;
@@ -53,6 +55,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes parameters")
 	float MaxHydration = 100.0f;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes parameters | Restore parameters")
+	float RestoreStaminaValue = 5.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes parameters | LostAttributes")
 	float LostHydrationPerTime = 0.1;
@@ -80,6 +85,8 @@ public:
 
 	UPROPERTY()
 	float Hydration = 0.0f;
+
+	bool bIsCDStamina = false;
 
 	FTimerHandle LostAttributesPerSecondTimer;
 };

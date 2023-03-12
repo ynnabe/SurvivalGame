@@ -19,6 +19,7 @@ public:
 
 	virtual void Move(const FInputActionValue& Value) {};
 	virtual void Look(const FInputActionValue& Value) {};
+	virtual void Jump() override;
 
 	FORCEINLINE USGCharacterAttributes* GetCharacterAttributes() const { return SGCharacterAttributes; }
 
@@ -31,9 +32,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components")
 	USGCharacterAttributes* SGCharacterAttributes;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action costs")
+	float JumpCost = 15.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Restore parameters")
+	float RestorStaminaCoolDown = 2.0f;
+
 public:	
 	virtual void Tick(float DeltaTime) override;
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+private:
+
+	FTimerHandle CDStaminaTimer;
 
 };

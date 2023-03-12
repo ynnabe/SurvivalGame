@@ -17,6 +17,25 @@ ASGBaseCharacter::ASGBaseCharacter(const FObjectInitializer& ObjectInitializer)
 }
 
 
+void ASGBaseCharacter::Jump()
+{
+	if(GetCharacterAttributes()->GetStamina() > JumpCost)
+	{
+		Super::Jump();
+
+		GetCharacterAttributes()->SetStamina(GetCharacterAttributes()->GetStamina() - JumpCost);
+		GetCharacterAttributes()->SetCDStamina(true);
+		if(GetWorld()->GetTimerManager().IsTimerActive(CDStaminaTimer))
+		{
+			GetWorld()->GetTimerManager().ClearTimer(CDStaminaTimer);
+		}
+		GetWorld()->GetTimerManager().SetTimer(CDStaminaTimer, [=]()
+		{
+			GetCharacterAttributes()->SetCDStamina(false);
+		}, RestorStaminaCoolDown, false);
+	}
+}
+
 void ASGBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();

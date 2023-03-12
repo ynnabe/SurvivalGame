@@ -54,14 +54,15 @@ void USGCharacterAttributes::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	
+	if(Stamina != 100.0f && !bIsCDStamina)
+	{
+		SetStamina(FMath::Clamp(Stamina + RestoreStaminaValue * DeltaTime, 0.0f, MaxStamina));
+	}
 }
 
 void USGCharacterAttributes::CalculateAttributes()
 {
 	SetHungry(Hungry - LostHungryPerTime);
 	SetHydration(Hydration - LostHydrationPerTime);
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("Hungry: %f"), GetHungry()));
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("Hydration: %f"), GetHydration()));
 }
 
