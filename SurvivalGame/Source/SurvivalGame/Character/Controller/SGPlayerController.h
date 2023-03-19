@@ -24,6 +24,9 @@ public:
 	
 	virtual void SetupInputComponent() override;
 
+	UFUNCTION(Client, Reliable)
+	void Client_SetupEI();
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Controls|Input actions")

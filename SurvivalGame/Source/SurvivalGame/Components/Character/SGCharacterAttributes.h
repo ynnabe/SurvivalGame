@@ -17,6 +17,8 @@ public:
 	
 	USGCharacterAttributes();
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	FOnAttributeChangeSignature OnHealthChanged;
 	FOnAttributeChangeSignature OnStaminaChanged;
 	FOnAttributeChangeSignature OnHungryChanged;
@@ -26,6 +28,7 @@ public:
 	FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
 	void SetHealth(float NewValue);
 
+	UFUNCTION(BlueprintPure)
 	FORCEINLINE float GetStamina() const { return Stamina; }
 	FORCEINLINE float GetMaxStamina() const { return MaxStamina; }
 	void SetStamina(float NewValue);
@@ -74,16 +77,16 @@ public:
 
 	void CalculateAttributes();
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	float Health = 0.0f;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	float Stamina = 0.0f;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	float Hungry = 0.0f;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	float Hydration = 0.0f;
 
 	bool bIsCDStamina = false;

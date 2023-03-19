@@ -3,14 +3,26 @@
 
 #include "SGCharacterAttributes.h"
 
+#include "Net/UnrealNetwork.h"
+
 // Sets default values for this component's properties
 USGCharacterAttributes::USGCharacterAttributes()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+	SetIsReplicatedByDefault(true);
 
 	// ...
+}
+
+void USGCharacterAttributes::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(USGCharacterAttributes, Health);
+	DOREPLIFETIME(USGCharacterAttributes, Stamina);
+	DOREPLIFETIME(USGCharacterAttributes, Hungry);
+	DOREPLIFETIME(USGCharacterAttributes, Hydration);
 }
 
 void USGCharacterAttributes::SetHealth(float NewValue)

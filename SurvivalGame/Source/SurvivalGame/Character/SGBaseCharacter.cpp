@@ -3,8 +3,10 @@
 
 #include "SGBaseCharacter.h"
 
+#include "Blueprint/UserWidget.h"
 #include "SurvivalGame/Components/Character/SGCharacterAttributes.h"
 #include "SurvivalGame/Components/Character/SGCharacterMovementComponent.h"
+#include "SurvivalGame/UI/SGPlayerWidget.h"
 
 
 ASGBaseCharacter::ASGBaseCharacter(const FObjectInitializer& ObjectInitializer)
@@ -19,21 +21,32 @@ ASGBaseCharacter::ASGBaseCharacter(const FObjectInitializer& ObjectInitializer)
 
 void ASGBaseCharacter::Jump()
 {
-	if(GetCharacterAttributes()->GetStamina() > JumpCost)
+	if(!SGCharacterMovementComponent->IsFalling())
 	{
-		Super::Jump();
+		if(GetCharacterAttributes()->GetStamina() > JumpCost)
+		{
+			Super::Jump();
 
-		GetCharacterAttributes()->SetStamina(GetCharacterAttributes()->GetStamina() - JumpCost);
-		GetCharacterAttributes()->SetCDStamina(true);
-		if(GetWorld()->GetTimerManager().IsTimerActive(CDStaminaTimer))
-		{
-			GetWorld()->GetTimerManager().ClearTimer(CDStaminaTimer);
+			if(GetLocalRole() == ROLE_Authority)
+			{
+				Client_Jump();
+			}
 		}
-		GetWorld()->GetTimerManager().SetTimer(CDStaminaTimer, [=]()
-		{
-			GetCharacterAttributes()->SetCDStamina(false);
-		}, RestorStaminaCoolDown, false);
 	}
+}
+
+void ASGBaseCharacter::Client_Jump_Implementation()
+{
+	GetCharacterAttributes()->SetStamina(GetCharacterAttributes()->GetStamina() - JumpCost);
+	GetCharacterAttributes()->SetCDStamina(true);
+	if(GetWorld()->GetTimerManager().IsTimerActive(CDStaminaTimer))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(CDStaminaTimer);
+	}
+	GetWorld()->GetTimerManager().SetTimer(CDStaminaTimer, [=]()
+	{
+		GetCharacterAttributes()->SetCDStamina(false);
+	}, RestorStaminaCoolDown, false);
 }
 
 void ASGBaseCharacter::BeginPlay()

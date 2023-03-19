@@ -14,7 +14,7 @@ void ASGPlayerController::SetPawn(APawn* InPawn)
 	Super::SetPawn(InPawn);
 
 	CachedBaseCharacter = Cast<ASGBaseCharacter>(InPawn);
-	if(CachedBaseCharacter.IsValid())
+	if(CachedBaseCharacter.IsValid() && IsLocalController())
 	{
 		CreateAndInitializeWidgets();
 	}
@@ -24,14 +24,9 @@ void ASGPlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	if(APlayerController* PC = Cast<APlayerController>(this))
+	if(GetLocalRole() == ROLE_Authority)
 	{
-		if(UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
-		{
-			Subsystem->ClearAllMappings();
-
-			Subsystem->AddMappingContext(BaseMappingContext, BaseMappingPriority);
-		}
+		Client_SetupEI();
 	}
 }
 
@@ -55,6 +50,19 @@ void ASGPlayerController::SetupInputComponent()
 		if(LookAction)
 		{
 			PlayerEnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASGPlayerController::Look);
+		}
+	}
+}
+
+void ASGPlayerController::Client_SetupEI_Implementation()
+{
+	if(APlayerController* PC = Cast<APlayerController>(this))
+	{
+		if(UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
+		{
+			Subsystem->ClearAllMappings();
+
+			Subsystem->AddMappingContext(BaseMappingContext, BaseMappingPriority);
 		}
 	}
 }
