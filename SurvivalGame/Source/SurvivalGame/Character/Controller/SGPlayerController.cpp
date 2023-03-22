@@ -51,6 +51,12 @@ void ASGPlayerController::SetupInputComponent()
 		{
 			PlayerEnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASGPlayerController::Look);
 		}
+
+		if(SprintAction)
+		{
+			PlayerEnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ASGPlayerController::StartSprint);
+			PlayerEnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASGPlayerController::StopSprint);
+		}
 	}
 }
 
@@ -64,27 +70,46 @@ void ASGPlayerController::Client_SetupEI_Implementation()
 
 			Subsystem->AddMappingContext(BaseMappingContext, BaseMappingPriority);
 		}
+
+		PC->bShowMouseCursor = false;
+		PC->SetInputMode(FInputModeGameOnly {});
 	}
 }
 
 void ASGPlayerController::Move(const FInputActionValue& Value)
 {
+	if(CachedBaseCharacter.IsValid())
 	CachedBaseCharacter->Move(Value);
 }
 
 void ASGPlayerController::Look(const FInputActionValue& Value)
 {
+	if(CachedBaseCharacter.IsValid())
 	CachedBaseCharacter->Look(Value);
 }
 
 void ASGPlayerController::JumpPressed()
 {
+	if(CachedBaseCharacter.IsValid())
 	CachedBaseCharacter->Jump();
 }
 
 void ASGPlayerController::JumpReleased()
 {
+	if(CachedBaseCharacter.IsValid())
 	CachedBaseCharacter->StopJumping();
+}
+
+void ASGPlayerController::StartSprint()
+{
+	if(CachedBaseCharacter.IsValid())
+	CachedBaseCharacter->StartSprint();
+}
+
+void ASGPlayerController::StopSprint()
+{
+	if(CachedBaseCharacter.IsValid())
+	CachedBaseCharacter->StopSprint();
 }
 
 void ASGPlayerController::CreateAndInitializeWidgets()

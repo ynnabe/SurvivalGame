@@ -24,6 +24,7 @@ public:
 	FOnAttributeChangeSignature OnHungryChanged;
 	FOnAttributeChangeSignature OnHydrationChanged;
 
+	UFUNCTION(BlueprintPure)
 	FORCEINLINE float GetHealth() const { return Health; }
 	FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
 	void SetHealth(float NewValue);
@@ -42,6 +43,7 @@ public:
 	void SetHydration(float NewValue);
 
 	void SetCDStamina(bool NewValue) { bIsCDStamina = NewValue; }
+	void SetIsSprinting(bool NewValue) { bIsSprinting = NewValue; }
 
 protected:
 	
@@ -70,26 +72,52 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes parameters | LostAttributes")
 	float LostTime = 1.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes parameters | LostAttributes")
+	float LostStaminaSprinting = 5.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Restore parameters")
+	float RestoreStaminaCoolDown = 2.0f;
 	
 public:	
 	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void CalculateAttributes();
+	void HealthChanged();
 
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing=OnRep_HealthChanged)
 	float Health = 0.0f;
 
-	UPROPERTY(Replicated)
+	UFUNCTION()
+	void OnRep_HealthChanged();
+	void StaminaChanged();
+
+	UPROPERTY(ReplicatedUsing=OnRep_StaminaChanged)
 	float Stamina = 0.0f;
 
-	UPROPERTY(Replicated)
+	UFUNCTION()
+	void OnRep_StaminaChanged();
+	void HungryChanged();
+
+	UPROPERTY(ReplicatedUsing=OnRep_HungryChanged)
 	float Hungry = 0.0f;
 
-	UPROPERTY(Replicated)
+	UFUNCTION()
+	void OnRep_HungryChanged();
+	void HydrationChanged();
+
+	UPROPERTY(ReplicatedUsing=OnRep_HydrationChanged)
 	float Hydration = 0.0f;
+
+	UFUNCTION()
+	void OnRep_HydrationChanged();
 
 	bool bIsCDStamina = false;
 
+	UPROPERTY(Replicated)
+	bool bIsSprinting = false;
+
 	FTimerHandle LostAttributesPerSecondTimer;
+	FTimerHandle SprintingTimer;
 };

@@ -2,11 +2,8 @@
 
 
 #include "SGBaseCharacter.h"
-
-#include "Blueprint/UserWidget.h"
 #include "SurvivalGame/Components/Character/SGCharacterAttributes.h"
 #include "SurvivalGame/Components/Character/SGCharacterMovementComponent.h"
-#include "SurvivalGame/UI/SGPlayerWidget.h"
 
 
 ASGBaseCharacter::ASGBaseCharacter(const FObjectInitializer& ObjectInitializer)
@@ -16,6 +13,8 @@ ASGBaseCharacter::ASGBaseCharacter(const FObjectInitializer& ObjectInitializer)
 
 	SGCharacterMovementComponent = Cast<USGCharacterMovementComponent>(GetCharacterMovement());
 	SGCharacterAttributes = CreateDefaultSubobject<USGCharacterAttributes>(TEXT("CharacterAttributes"));
+
+	GetMesh()->SetOwnerNoSee(true);
 }
 
 
@@ -26,14 +25,20 @@ void ASGBaseCharacter::Jump()
 		if(GetCharacterAttributes()->GetStamina() > JumpCost)
 		{
 			Super::Jump();
-
-			if(GetLocalRole() == ROLE_Authority)
+			GetCharacterAttributes()->SetStamina(GetCharacterAttributes()->GetStamina() - JumpCost);
+			GetCharacterAttributes()->SetCDStamina(true);
+			if(GetWorld()->GetTimerManager().IsTimerActive(CDStaminaTimer))
 			{
-				Client_Jump();
+				GetWorld()->GetTimerManager().ClearTimer(CDStaminaTimer);
 			}
+			GetWorld()->GetTimerManager().SetTimer(CDStaminaTimer, [=]()
+			{
+				GetCharacterAttributes()->SetCDStamina(false);
+			}, RestoreStaminaCoolDown, false);
 		}
 	}
 }
+
 
 void ASGBaseCharacter::Client_Jump_Implementation()
 {
@@ -46,7 +51,53 @@ void ASGBaseCharacter::Client_Jump_Implementation()
 	GetWorld()->GetTimerManager().SetTimer(CDStaminaTimer, [=]()
 	{
 		GetCharacterAttributes()->SetCDStamina(false);
-	}, RestorStaminaCoolDown, false);
+	}, RestoreStaminaCoolDown, false);
+}
+
+void ASGBaseCharacter::StartSprint()
+{
+	if(IsLocallyControlled())
+	{
+		Server_StartSprint();
+	}
+}
+
+void ASGBaseCharacter::StopSprint()
+{
+	if(IsLocallyControlled())
+	{
+		Server_StopSprint();
+	}
+}
+
+void ASGBaseCharacter::Server_StartSprint_Implementation()
+{
+	SGCharacterAttributes->bIsSprinting = true;
+	SGCharacterMovementComponent->SetIsSprinting(true);
+}
+
+void ASGBaseCharacter::Server_StopSprint_Implementation()
+{
+	SGCharacterAttributes->bIsSprinting = false;
+	SGCharacterMovementComponent->SetIsSprinting(false);
+}
+
+void ASGBaseCharacter::Client_StartSprint_Implementation()
+{
+	SGCharacterMovementComponent->SetIsSprinting(true);
+}
+
+void ASGBaseCharacter::Client_StopSprint_Implementation()
+{
+	SGCharacterMovementComponent->SetIsSprinting(false);
+}
+
+void ASGBaseCharacter::Server_Jump_Implementation()
+{
+	if(GetLocalRole() == ROLE_Authority)
+	{
+		Client_Jump();
+	}
 }
 
 void ASGBaseCharacter::BeginPlay()
@@ -59,7 +110,6 @@ void ASGBaseCharacter::BeginPlay()
 void ASGBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 

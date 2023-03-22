@@ -22,6 +22,24 @@ public:
 	virtual void Look(const FInputActionValue& Value) {};
 	virtual void Jump() override;
 
+	virtual void StartSprint();
+	virtual void StopSprint();
+
+	UFUNCTION(Server, Reliable)
+	void Server_StartSprint();
+
+	UFUNCTION(Server, Reliable)
+	void Server_StopSprint();
+
+	UFUNCTION(Client, Reliable)
+	void Client_StartSprint();
+
+	UFUNCTION(Client, Reliable)
+	void Client_StopSprint();
+
+	UFUNCTION(Server, Reliable)
+	void Server_Jump();
+
 	UFUNCTION(Client, Reliable)
 	void Client_Jump();
 
@@ -39,8 +57,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action costs")
 	float JumpCost = 15.0f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Restore parameters")
-	float RestorStaminaCoolDown = 2.0f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action costs")
+	float RestoreStaminaCoolDown = 3.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widgets")
 	TSubclassOf<USGPlayerWidget> PlayerHUDWidgetClass;

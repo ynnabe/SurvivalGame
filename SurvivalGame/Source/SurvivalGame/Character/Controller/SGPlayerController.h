@@ -38,6 +38,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Controls|Input actions")
 	UInputAction* JumpAction;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Controls|Input actions")
+	UInputAction* SprintAction;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Controls|Input mapping")
 	UInputMappingContext* BaseMappingContext;
 
@@ -48,6 +51,8 @@ protected:
 	void Look(const FInputActionValue& Value);
 	void JumpPressed();
 	void JumpReleased();
+	void StartSprint();
+	void StopSprint();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widgets")
 	TSubclassOf<USGPlayerWidget> PlayerHUDWidgetClass;

@@ -23,30 +23,31 @@ void USGCharacterAttributes::GetLifetimeReplicatedProps(TArray<FLifetimeProperty
 	DOREPLIFETIME(USGCharacterAttributes, Stamina);
 	DOREPLIFETIME(USGCharacterAttributes, Hungry);
 	DOREPLIFETIME(USGCharacterAttributes, Hydration);
+	DOREPLIFETIME(USGCharacterAttributes, bIsSprinting);
 }
 
 void USGCharacterAttributes::SetHealth(float NewValue)
 {
 	Health = NewValue;
-	OnHealthChanged.Broadcast(Health / MaxHealth);
+	HealthChanged();
 }
 
 void USGCharacterAttributes::SetStamina(float NewValue)
 {
 	Stamina = NewValue;
-	OnStaminaChanged.Broadcast(Stamina / MaxStamina);
+	StaminaChanged();
 }
 
 void USGCharacterAttributes::SetHungry(float NewValue)
 {
 	Hungry = NewValue;
-	OnHungryChanged.Broadcast(Hungry);
+	HungryChanged();
 }
 
 void USGCharacterAttributes::SetHydration(float NewValue)
 {
 	Hydration = NewValue;
-	OnHydrationChanged.Broadcast(Hydration);
+	HydrationChanged();
 }
 
 void USGCharacterAttributes::BeginPlay()
@@ -66,9 +67,14 @@ void USGCharacterAttributes::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if(Stamina != 100.0f && !bIsCDStamina)
+	if(Stamina != 100.0f && !bIsCDStamina && !bIsSprinting)
 	{
 		SetStamina(FMath::Clamp(Stamina + RestoreStaminaValue * DeltaTime, 0.0f, MaxStamina));
+	}
+
+	if(bIsSprinting)
+	{
+		SetStamina(FMath::Clamp(Stamina - LostStaminaSprinting * DeltaTime, 0.0f, MaxStamina));
 	}
 }
 
@@ -76,5 +82,45 @@ void USGCharacterAttributes::CalculateAttributes()
 {
 	SetHungry(Hungry - LostHungryPerTime);
 	SetHydration(Hydration - LostHydrationPerTime);
+}
+
+void USGCharacterAttributes::HealthChanged()
+{
+	OnHealthChanged.Broadcast(Health / MaxHealth);
+}
+
+void USGCharacterAttributes::OnRep_HealthChanged()
+{
+	HealthChanged();
+}
+
+void USGCharacterAttributes::StaminaChanged()
+{
+	OnStaminaChanged.Broadcast(Stamina / MaxStamina);
+}
+
+void USGCharacterAttributes::OnRep_StaminaChanged()
+{
+	StaminaChanged();
+}
+
+void USGCharacterAttributes::HungryChanged()
+{
+	OnHungryChanged.Broadcast(Hungry);
+}
+
+void USGCharacterAttributes::OnRep_HungryChanged()
+{
+	HungryChanged();
+}
+
+void USGCharacterAttributes::HydrationChanged()
+{
+	OnHydrationChanged.Broadcast(Hydration);
+}
+
+void USGCharacterAttributes::OnRep_HydrationChanged()
+{
+	HydrationChanged();
 }
 
