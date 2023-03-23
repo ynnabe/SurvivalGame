@@ -3,7 +3,16 @@
 
 #include "SGPlayerCharacter.h"
 
+#include "Camera/CameraComponent.h"
 #include "SurvivalGame/Components/Character/SGCharacterMovementComponent.h"
+
+ASGPlayerCharacter::ASGPlayerCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<USGCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
+{
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	CameraComponent->SetupAttachment(GetMesh());
+	CameraComponent->bUsePawnControlRotation = true;
+}
 
 void ASGPlayerCharacter::Move(const FInputActionValue& Value)
 {
@@ -29,4 +38,24 @@ void ASGPlayerCharacter::Look(const FInputActionValue& Value)
 
 	AddControllerPitchInput(Value[1] * -1);
 	AddControllerYawInput(Value[0]);
+}
+
+void ASGPlayerCharacter::StartSprint()
+{
+	Super::StartSprint();
+	OnStartSprint();
+}
+
+void ASGPlayerCharacter::StopSprint()
+{
+	Super::StopSprint();
+	OnStopSprint();
+}
+
+void ASGPlayerCharacter::OnStopSprint_Implementation()
+{
+}
+
+void ASGPlayerCharacter::OnStartSprint_Implementation()
+{
 }

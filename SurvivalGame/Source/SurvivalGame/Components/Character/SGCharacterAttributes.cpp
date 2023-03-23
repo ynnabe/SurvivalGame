@@ -4,6 +4,7 @@
 #include "SGCharacterAttributes.h"
 
 #include "Net/UnrealNetwork.h"
+#include "SurvivalGame/Character/SGBaseCharacter.h"
 
 // Sets default values for this component's properties
 USGCharacterAttributes::USGCharacterAttributes()
@@ -12,6 +13,8 @@ USGCharacterAttributes::USGCharacterAttributes()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 	SetIsReplicatedByDefault(true);
+
+	CachedBaseCharacter = Cast<ASGBaseCharacter>(GetOwner());
 
 	// ...
 }
@@ -75,6 +78,11 @@ void USGCharacterAttributes::TickComponent(float DeltaTime, ELevelTick TickType,
 	if(bIsSprinting)
 	{
 		SetStamina(FMath::Clamp(Stamina - LostStaminaSprinting * DeltaTime, 0.0f, MaxStamina));
+	}
+
+	if(FMath::IsNearlyZero(Stamina))
+	{
+		CachedBaseCharacter->StopSprint();
 	}
 }
 

@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "SGCharacterAttributes.generated.h"
 
+class ASGBaseCharacter;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnAttributeChangeSignature, float);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -117,6 +118,8 @@ public:
 
 	UPROPERTY(Replicated)
 	bool bIsSprinting = false;
+
+	TWeakObjectPtr<ASGBaseCharacter> CachedBaseCharacter;
 
 	FTimerHandle LostAttributesPerSecondTimer;
 	FTimerHandle SprintingTimer;

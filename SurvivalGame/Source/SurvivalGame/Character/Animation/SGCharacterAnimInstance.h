@@ -21,6 +21,8 @@ public:
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
+	void ToggleFalling(bool NewState) { bIsJumping = NewState; }
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Parameters")
@@ -28,6 +30,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Parameters")
 	float Direction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Parameters")
+	bool bIsJumping;
 
 private:
 

@@ -4,6 +4,7 @@
 #include "SGCharacterAnimInstance.h"
 #include "KismetAnimationLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "SurvivalGame/Character/SGBaseCharacter.h"
 
 void USGCharacterAnimInstance::NativeBeginPlay()
@@ -24,4 +25,5 @@ void USGCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	Speed = CachedBaseCharacter->GetCharacterMovement()->Velocity.Size();
 	Direction = UKismetAnimationLibrary::CalculateDirection(CachedBaseCharacter->GetCharacterMovement()->Velocity, CachedBaseCharacter->GetActorRotation());
+	bIsJumping = CachedBaseCharacter->bIsJumping;
 }

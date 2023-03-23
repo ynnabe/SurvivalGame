@@ -18,32 +18,29 @@ class SURVIVALGAME_API ASGBaseCharacter : public ACharacter
 public:
 	ASGBaseCharacter(const FObjectInitializer& ObjectInitializer);
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	virtual void Move(const FInputActionValue& Value) {};
 	virtual void Look(const FInputActionValue& Value) {};
 	virtual void Jump() override;
+	virtual void Landed(const FHitResult& Hit) override;
 
 	virtual void StartSprint();
 	virtual void StopSprint();
 
-	UFUNCTION(Server, Reliable)
-	void Server_StartSprint();
+	UFUNCTION(Server, Unreliable)
+	void Server_ToggleJump(bool NewState);
 
 	UFUNCTION(Server, Reliable)
-	void Server_StopSprint();
-
-	UFUNCTION(Client, Reliable)
-	void Client_StartSprint();
-
-	UFUNCTION(Client, Reliable)
-	void Client_StopSprint();
+	void Server_StartAttributesSprint();
 
 	UFUNCTION(Server, Reliable)
-	void Server_Jump();
-
-	UFUNCTION(Client, Reliable)
-	void Client_Jump();
+	void Server_StopAttributesSprint();
 
 	FORCEINLINE USGCharacterAttributes* GetCharacterAttributes() const { return SGCharacterAttributes; }
+	
+	UPROPERTY(Replicated)
+	bool bIsJumping = false;
 
 protected:
 	virtual void BeginPlay() override;
@@ -72,6 +69,7 @@ private:
 
 	UPROPERTY()
 	USGPlayerWidget* PlayerHUDWidget = nullptr;
+
 
 	FTimerHandle CDStaminaTimer;
 

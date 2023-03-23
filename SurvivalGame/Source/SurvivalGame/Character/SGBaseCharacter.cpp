@@ -2,6 +2,7 @@
 
 
 #include "SGBaseCharacter.h"
+#include "Net/UnrealNetwork.h"
 #include "SurvivalGame/Components/Character/SGCharacterAttributes.h"
 #include "SurvivalGame/Components/Character/SGCharacterMovementComponent.h"
 
@@ -15,6 +16,12 @@ ASGBaseCharacter::ASGBaseCharacter(const FObjectInitializer& ObjectInitializer)
 	SGCharacterAttributes = CreateDefaultSubobject<USGCharacterAttributes>(TEXT("CharacterAttributes"));
 
 	GetMesh()->SetOwnerNoSee(true);
+}
+
+void ASGBaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ASGBaseCharacter, bIsJumping);
 }
 
 
@@ -35,69 +42,50 @@ void ASGBaseCharacter::Jump()
 			{
 				GetCharacterAttributes()->SetCDStamina(false);
 			}, RestoreStaminaCoolDown, false);
+
+			Server_ToggleJump(true);
 		}
 	}
 }
 
-
-void ASGBaseCharacter::Client_Jump_Implementation()
+void ASGBaseCharacter::Landed(const FHitResult& Hit)
 {
-	GetCharacterAttributes()->SetStamina(GetCharacterAttributes()->GetStamina() - JumpCost);
-	GetCharacterAttributes()->SetCDStamina(true);
-	if(GetWorld()->GetTimerManager().IsTimerActive(CDStaminaTimer))
-	{
-		GetWorld()->GetTimerManager().ClearTimer(CDStaminaTimer);
-	}
-	GetWorld()->GetTimerManager().SetTimer(CDStaminaTimer, [=]()
-	{
-		GetCharacterAttributes()->SetCDStamina(false);
-	}, RestoreStaminaCoolDown, false);
+	Super::Landed(Hit);
+
+	Server_ToggleJump(false);
 }
 
 void ASGBaseCharacter::StartSprint()
 {
+	SGCharacterMovementComponent->SetIsSprinting(true);
 	if(IsLocallyControlled())
 	{
-		Server_StartSprint();
+		Server_StartAttributesSprint();
 	}
 }
 
 void ASGBaseCharacter::StopSprint()
 {
+	SGCharacterMovementComponent->SetIsSprinting(false);
 	if(IsLocallyControlled())
 	{
-		Server_StopSprint();
+		Server_StopAttributesSprint();
 	}
 }
 
-void ASGBaseCharacter::Server_StartSprint_Implementation()
+void ASGBaseCharacter::Server_ToggleJump_Implementation(bool NewState)
+{
+	bIsJumping = NewState;
+}
+
+void ASGBaseCharacter::Server_StartAttributesSprint_Implementation()
 {
 	SGCharacterAttributes->bIsSprinting = true;
-	SGCharacterMovementComponent->SetIsSprinting(true);
 }
 
-void ASGBaseCharacter::Server_StopSprint_Implementation()
+void ASGBaseCharacter::Server_StopAttributesSprint_Implementation()
 {
 	SGCharacterAttributes->bIsSprinting = false;
-	SGCharacterMovementComponent->SetIsSprinting(false);
-}
-
-void ASGBaseCharacter::Client_StartSprint_Implementation()
-{
-	SGCharacterMovementComponent->SetIsSprinting(true);
-}
-
-void ASGBaseCharacter::Client_StopSprint_Implementation()
-{
-	SGCharacterMovementComponent->SetIsSprinting(false);
-}
-
-void ASGBaseCharacter::Server_Jump_Implementation()
-{
-	if(GetLocalRole() == ROLE_Authority)
-	{
-		Client_Jump();
-	}
 }
 
 void ASGBaseCharacter::BeginPlay()
