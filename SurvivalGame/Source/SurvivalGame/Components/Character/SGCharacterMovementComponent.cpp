@@ -9,6 +9,13 @@ USGCharacterMovementComponent::USGCharacterMovementComponent()
 	SetIsReplicatedByDefault(true);
 }
 
+void USGCharacterMovementComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	CachedBaseCharacter = StaticCast<ASGBaseCharacter*>(GetOwner());
+}
+
 FNetworkPredictionData_Client* USGCharacterMovementComponent::GetPredictionData_Client() const
 {
 	if(ClientPredictionData == nullptr)
@@ -66,7 +73,7 @@ void USGCharacterMovementComponent::TickComponent(float DeltaTime, ELevelTick Ti
 
 	if(FMath::IsNearlyZero(Velocity.Size()) && bIsSprinting)
 	{
-		SetIsSprinting(false);
+		CachedBaseCharacter->StopSprint();
 	}
 }
 

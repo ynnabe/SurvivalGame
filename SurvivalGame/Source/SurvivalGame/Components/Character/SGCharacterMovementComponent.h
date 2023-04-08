@@ -6,6 +6,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SGCharacterMovementComponent.generated.h"
 
+
+class ASGBaseCharacter;
 /**
  * 
  */
@@ -19,6 +21,8 @@ class SURVIVALGAME_API USGCharacterMovementComponent : public UCharacterMovement
 public:
 
 	USGCharacterMovementComponent();
+
+	virtual void BeginPlay() override;
 
 	virtual FNetworkPredictionData_Client* GetPredictionData_Client() const override;
 
@@ -41,6 +45,8 @@ protected:
 private:
 	
 	bool bIsSprinting = false;
+
+	TWeakObjectPtr<ASGBaseCharacter> CachedBaseCharacter;
 	
 };
 
