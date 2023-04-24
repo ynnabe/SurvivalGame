@@ -5,6 +5,7 @@
 
 #include "Camera/CameraComponent.h"
 #include "SurvivalGame/Components/Character/SGCharacterMovementComponent.h"
+#include "SurvivalGame/Interfaces/SGInteractableInterface.h"
 
 ASGPlayerCharacter::ASGPlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<USGCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -50,6 +51,61 @@ void ASGPlayerCharacter::StopSprint()
 {
 	Super::StopSprint();
 	OnStopSprint();
+}
+
+void ASGPlayerCharacter::Interact()
+{
+	Super::Interact();
+
+	if(IsValid(InteractableLineObject))
+	{
+		ISGInteractableInterface* Interface = Cast<ISGInteractableInterface>(InteractableLineObject);
+		if(Interface)
+		{
+			Interface->InteractPure(this);
+		}
+	}
+}
+
+void ASGPlayerCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	FHitResult InteractableHitResult;
+	FVector ViewLocation;
+	FRotator ViewRotation;
+	GetController()->GetPlayerViewPoint(ViewLocation, ViewRotation);
+	FVector StartTrace = ViewRotation.Vector();
+	FVector EndTrace = ViewLocation + StartTrace * InteractTraceLength;
+	
+	if(GetWorld()->LineTraceSingleByChannel(InteractableHitResult, ViewLocation, EndTrace, ECC_Visibility))
+	{
+		if(InteractableLineObject != InteractableHitResult.GetActor())
+		{
+			if(ISGInteractableInterface* Interface = Cast<ISGInteractableInterface>(InteractableLineObject))
+			{
+				Interface->Execute_DetectedByTraceInteract(InteractableLineObject);
+			}
+			if(ISGInteractableInterface* Interface = Cast<ISGInteractableInterface>(InteractableHitResult.GetActor()))
+			{
+				InteractableLineObject = InteractableHitResult.GetActor();
+				Interface->Execute_DetectedByTraceInteract(InteractableLineObject);
+			}
+			else
+			{
+				InteractableLineObject = nullptr;
+			}
+		}
+	}
+	else
+	{
+		if(ISGInteractableInterface* Interface = Cast<ISGInteractableInterface>(InteractableLineObject))
+		{
+			Interface->Execute_DetectedByTraceInteract(InteractableLineObject);
+		}
+
+		InteractableLineObject = nullptr;
+	}
 }
 
 void ASGPlayerCharacter::OnStopSprint_Implementation()

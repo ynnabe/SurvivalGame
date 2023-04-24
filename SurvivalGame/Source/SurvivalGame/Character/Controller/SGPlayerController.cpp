@@ -57,6 +57,11 @@ void ASGPlayerController::SetupInputComponent()
 			PlayerEnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ASGPlayerController::StartSprint);
 			PlayerEnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASGPlayerController::StopSprint);
 		}
+
+		if(InteractAction)
+		{
+			PlayerEnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ASGPlayerController::Interact);
+		}
 	}
 }
 
@@ -110,6 +115,12 @@ void ASGPlayerController::StopSprint()
 {
 	if(CachedBaseCharacter.IsValid())
 	CachedBaseCharacter->StopSprint();
+}
+
+void ASGPlayerController::Interact()
+{
+	if(CachedBaseCharacter.IsValid())
+	CachedBaseCharacter->Interact();
 }
 
 void ASGPlayerController::CreateAndInitializeWidgets()

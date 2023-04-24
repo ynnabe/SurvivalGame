@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Actors/Equipment/AEquipable.h"
+#include "AEquipable.h"
+#include "SurvivalGame/Components/Inventory/Data/InventoryTypes.h"
 #include "Equipment.generated.h"
 
+class USGInventoryComponent;
 /**
  * 
  */
@@ -13,5 +15,26 @@ UCLASS()
 class SURVIVALGAME_API AEquipment : public AAEquipable
 {
 	GENERATED_BODY()
+
+public:
+
+	AEquipment();
+
+	virtual FName GetItemName() const override;
+
+	FORCEINLINE EEquipmentType GetType() const { return Type; }
+
+#pragma region InteractableInterface
+	virtual void InteractPure(ASGBaseCharacter* Character) override;
+#pragma endregion
 	
+protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Inventory Component")
+	USGInventoryComponent* InventoryComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Equipment parameters")
+	EEquipmentType Type;
+
+private:
 };

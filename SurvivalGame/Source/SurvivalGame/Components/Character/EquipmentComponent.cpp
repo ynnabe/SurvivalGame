@@ -3,6 +3,8 @@
 
 #include "EquipmentComponent.h"
 
+#include "SurvivalGame/Actors/Equipment/Equipment.h"
+
 UEquipmentComponent::UEquipmentComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -34,6 +36,39 @@ bool UEquipmentComponent::EquipGear(EquipmentSlot Slot, AEquipment* Equipment)
 			return false;
 		}
 	}
+}
+
+bool UEquipmentComponent::SetItemInSlot(AEquipment* EquipmentItem)
+{
+	switch(EquipmentItem->GetType())
+	{
+		case EEquipmentType::None:
+			{
+				return false;
+			}
+		case EEquipmentType::Torso:
+			{
+				if(!IsValid(TorsoSlot))
+				{
+					TorsoSlot = EquipmentItem;
+					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("%s equiped in Torso slot"), *EquipmentItem->GetItemName().ToString()));
+					return true;
+				}
+				return false;
+			}
+		case EEquipmentType::Backpack:
+			{
+				if(!IsValid(BackpackSlot))
+				{
+					BackpackSlot = EquipmentItem;
+					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("%s equiped in Backpack slot"), *EquipmentItem->GetItemName().ToString()));
+					return true;
+				}
+				return false;
+			}
+	}
+	
+	return false;
 }
 
 void UEquipmentComponent::BeginPlay()

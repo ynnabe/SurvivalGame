@@ -3,6 +3,7 @@
 
 #include "SGBaseCharacter.h"
 #include "Net/UnrealNetwork.h"
+#include "SurvivalGame/Components/Character/EquipmentComponent.h"
 #include "SurvivalGame/Components/Character/SGCharacterAttributes.h"
 #include "SurvivalGame/Components/Character/SGCharacterMovementComponent.h"
 
@@ -14,6 +15,7 @@ ASGBaseCharacter::ASGBaseCharacter(const FObjectInitializer& ObjectInitializer)
 
 	SGCharacterMovementComponent = Cast<USGCharacterMovementComponent>(GetCharacterMovement());
 	SGCharacterAttributes = CreateDefaultSubobject<USGCharacterAttributes>(TEXT("CharacterAttributes"));
+	SGEquipmentComponent = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipmentComponent"));
 
 	GetMesh()->SetOwnerNoSee(true);
 }
@@ -53,6 +55,11 @@ void ASGBaseCharacter::Landed(const FHitResult& Hit)
 	Super::Landed(Hit);
 
 	Server_ToggleJump(false);
+}
+
+void ASGBaseCharacter::Interact()
+{
+	
 }
 
 void ASGBaseCharacter::StartSprint()

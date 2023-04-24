@@ -41,6 +41,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Controls|Input actions")
 	UInputAction* SprintAction;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Controls|Input actions")
+	UInputAction* InteractAction;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Controls|Input mapping")
 	UInputMappingContext* BaseMappingContext;
 
@@ -53,6 +56,7 @@ protected:
 	void JumpReleased();
 	void StartSprint();
 	void StopSprint();
+	void Interact();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widgets")
 	TSubclassOf<USGPlayerWidget> PlayerHUDWidgetClass;

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SGBaseCharacter.h"
+#include "SurvivalGame/Interfaces/SGInteractableInterface.h"
 #include "SGPlayerCharacter.generated.h"
 
 /**
@@ -24,11 +25,17 @@ public:
 	virtual void StartSprint() override;
 	virtual void StopSprint() override;
 
+	virtual void Interact() override;
+
+	virtual void Tick(float DeltaSeconds) override;
+	
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components")
 	class UCameraComponent* CameraComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Interactable parameters")
+	float InteractTraceLength = 300.0f;
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void OnStartSprint();
@@ -38,5 +45,6 @@ protected:
 
 private:
 
-	
+	UPROPERTY()
+	AActor* InteractableLineObject;
 };

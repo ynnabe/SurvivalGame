@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "SurvivalGame/Actors/Items/Item.h"
 #include "AEquipable.generated.h"
 
 UCLASS()
-class SURVIVALGAME_API AAEquipable : public AActor
+class SURVIVALGAME_API AAEquipable : public AItem
 {
 	GENERATED_BODY()
 	

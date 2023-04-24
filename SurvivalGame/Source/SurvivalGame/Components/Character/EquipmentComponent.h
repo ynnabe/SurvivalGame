@@ -23,6 +23,8 @@ public:
 
 	bool EquipGear(EquipmentSlot Slot, AEquipment* Equipment);
 
+	bool SetItemInSlot(AEquipment* EquipmentItem);
+
 protected:
 	virtual void BeginPlay() override;
 

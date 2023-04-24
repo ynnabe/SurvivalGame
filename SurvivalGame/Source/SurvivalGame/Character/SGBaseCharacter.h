@@ -8,6 +8,7 @@
 #include "SurvivalGame/UI/SGPlayerWidget.h"
 #include "SGBaseCharacter.generated.h"
 
+class UEquipmentComponent;
 class USGCharacterAttributes;
 class USGCharacterMovementComponent;
 UCLASS()
@@ -25,6 +26,8 @@ public:
 	virtual void Jump() override;
 	virtual void Landed(const FHitResult& Hit) override;
 
+	virtual void Interact();
+
 	virtual void StartSprint();
 	virtual void StopSprint();
 
@@ -38,6 +41,7 @@ public:
 	void Server_StopAttributesSprint();
 
 	FORCEINLINE USGCharacterAttributes* GetCharacterAttributes() const { return SGCharacterAttributes; }
+	FORCEINLINE UEquipmentComponent* GetEquipmentComponent() const { return SGEquipmentComponent; }
 	
 	UPROPERTY(Replicated)
 	bool bIsJumping = false;
@@ -50,6 +54,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components")
 	USGCharacterAttributes* SGCharacterAttributes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components")
+	UEquipmentComponent* SGEquipmentComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action costs")
 	float JumpCost = 15.0f;
