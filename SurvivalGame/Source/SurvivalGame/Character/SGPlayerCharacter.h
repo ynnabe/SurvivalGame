@@ -7,6 +7,7 @@
 #include "SurvivalGame/Interfaces/SGInteractableInterface.h"
 #include "SGPlayerCharacter.generated.h"
 
+DECLARE_DELEGATE_TwoParams(FInteractableDetectedSignature, bool, FText);
 /**
  * 
  */
@@ -18,6 +19,8 @@ class SURVIVALGAME_API ASGPlayerCharacter : public ASGBaseCharacter
 public:
 
 	ASGPlayerCharacter(const FObjectInitializer& ObjectInitializer);
+
+	FInteractableDetectedSignature InteractableDetected;
 
 	virtual void Move(const FInputActionValue& Value) override;
 	virtual void Look(const FInputActionValue& Value) override;

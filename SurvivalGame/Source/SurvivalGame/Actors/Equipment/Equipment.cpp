@@ -12,7 +12,7 @@ AEquipment::AEquipment()
 	InventoryComponent = CreateDefaultSubobject<USGInventoryComponent>(TEXT("InventoryComponent"));
 }
 
-FName AEquipment::GetItemName() const
+FText AEquipment::GetItemName() const
 {
 	return Super::GetItemName();
 }

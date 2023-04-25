@@ -15,7 +15,7 @@ class SURVIVALGAME_API AItem : public AActor, public ISGInteractableInterface
 public:	
 	AItem();
 
-	FORCEINLINE virtual FName GetItemName() const { return Name; }
+	FORCEINLINE virtual FText GetItemName() const { return Name; }
 
 #pragma region InteractableInterface
 	void DetectedByTraceInteract_Implementation() override;
@@ -27,7 +27,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
-	FName Name;
+	FText Name;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
 	UTexture2D* Image;

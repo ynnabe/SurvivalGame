@@ -4,6 +4,7 @@
 #include "SGPlayerCharacter.h"
 
 #include "Camera/CameraComponent.h"
+#include "SurvivalGame/Actors/Items/Item.h"
 #include "SurvivalGame/Components/Character/SGCharacterMovementComponent.h"
 #include "SurvivalGame/Interfaces/SGInteractableInterface.h"
 
@@ -90,10 +91,15 @@ void ASGPlayerCharacter::Tick(float DeltaSeconds)
 			{
 				InteractableLineObject = InteractableHitResult.GetActor();
 				Interface->Execute_DetectedByTraceInteract(InteractableLineObject);
+				if(AItem* Item = Cast<AItem>(InteractableLineObject))
+				{
+					InteractableDetected.Execute(true, Item->GetItemName());
+				}
 			}
 			else
 			{
 				InteractableLineObject = nullptr;
+				InteractableDetected.Execute(false, FText());
 			}
 		}
 	}
@@ -105,6 +111,7 @@ void ASGPlayerCharacter::Tick(float DeltaSeconds)
 		}
 
 		InteractableLineObject = nullptr;
+		InteractableDetected.Execute(false, FText());
 	}
 }
 

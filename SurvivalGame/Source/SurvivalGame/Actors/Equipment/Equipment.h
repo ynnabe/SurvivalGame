@@ -20,7 +20,7 @@ public:
 
 	AEquipment();
 
-	virtual FName GetItemName() const override;
+	virtual FText GetItemName() const override;
 
 	FORCEINLINE EEquipmentType GetType() const { return Type; }
 

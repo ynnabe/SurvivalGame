@@ -6,6 +6,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "SurvivalGame/Character/SGBaseCharacter.h"
+#include "SurvivalGame/Character/SGPlayerCharacter.h"
+#include "SurvivalGame/UI/InteractableWidget.h"
 #include "SurvivalGame/UI/SGCharacterAttributesWidget.h"
 #include "SurvivalGame/UI/SGPlayerWidget.h"
 
@@ -140,6 +142,15 @@ void ASGPlayerController::CreateAndInitializeWidgets()
 		if(IsValid(AttributesWidget))
 		{
 			AttributesWidget->BindDelegates(CachedBaseCharacter.Get());
+		}
+	}
+
+	if(CachedBaseCharacter.IsValid() && IsValid(PlayerHUDWidget))
+	{
+		UInteractableWidget* InteractableWidget = PlayerHUDWidget->GetCharacterInteractableWidget();
+		if(IsValid(InteractableWidget))
+		{
+			InteractableWidget->BindDelegates(Cast<ASGPlayerCharacter>(CachedBaseCharacter.Get()));
 		}
 	}
 }
