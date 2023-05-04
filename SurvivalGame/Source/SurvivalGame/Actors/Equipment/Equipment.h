@@ -35,6 +35,4 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Equipment parameters")
 	EEquipmentType Type;
-
-private:
 };

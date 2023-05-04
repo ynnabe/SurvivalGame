@@ -14,6 +14,11 @@ ASGPlayerCharacter::ASGPlayerCharacter(const FObjectInitializer& ObjectInitializ
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComponent->SetupAttachment(GetMesh());
 	CameraComponent->bUsePawnControlRotation = true;
+
+	FPSkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FPSkeletalMeshComponent"));
+	FPSkeletalMeshComponent->SetupAttachment(RootComponent);
+	FPSkeletalMeshComponent->SetOnlyOwnerSee(true);
+	GetMesh()->SetCastHiddenShadow(true);
 }
 
 void ASGPlayerCharacter::Move(const FInputActionValue& Value)

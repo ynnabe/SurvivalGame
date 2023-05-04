@@ -37,6 +37,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components")
 	class UCameraComponent* CameraComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components")
+	class USkeletalMeshComponent* FPSkeletalMeshComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Interactable parameters")
 	float InteractTraceLength = 300.0f;
 	
