@@ -25,6 +25,12 @@ public:
 
 	bool SetItemInSlot(AEquipment* EquipmentItem);
 
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE AEquipment* GetTorsoSlot() const { return TorsoSlot; }
+	
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE AEquipment* GetBackpackSlot() const { return BackpackSlot; }
+
 protected:
 	virtual void BeginPlay() override;
 

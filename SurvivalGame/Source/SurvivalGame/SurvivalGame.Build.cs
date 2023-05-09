@@ -8,7 +8,7 @@ public class SurvivalGame : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "OnlineSubsystem", "OnlineSubsystemSteam", "AdvancedSessions", "AdvancedSteamSessions" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "OnlineSubsystem", "OnlineSubsystemSteam", "AdvancedSessions", "AdvancedSteamSessions", "Slate", "SlateCore" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "AnimGraphRuntime" });
 

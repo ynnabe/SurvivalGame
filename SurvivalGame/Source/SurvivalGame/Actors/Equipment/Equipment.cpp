@@ -4,8 +4,10 @@
 #include "Equipment.h"
 
 #include "SurvivalGame/Character/SGBaseCharacter.h"
+#include "SurvivalGame/Character/SGPlayerCharacter.h"
 #include "SurvivalGame/Components/Actor/SGInventoryComponent.h"
 #include "SurvivalGame/Components/Character/EquipmentComponent.h"
+#include "SurvivalGame/UI/Inventory/InventoryWidget.h"
 
 AEquipment::AEquipment()
 {
@@ -22,6 +24,8 @@ void AEquipment::InteractPure(ASGBaseCharacter* Character)
 	UEquipmentComponent* CharacterEquipmentComponent = Character->GetEquipmentComponent();
 	if(CharacterEquipmentComponent->SetItemInSlot(this))
 	{
+		ASGPlayerCharacter* PlayerCharacter = Cast<ASGPlayerCharacter>(Character);
+		PlayerCharacter->GetInventoryWidget()->FillData(PlayerCharacter);
 		Destroy();
 	}
 	else

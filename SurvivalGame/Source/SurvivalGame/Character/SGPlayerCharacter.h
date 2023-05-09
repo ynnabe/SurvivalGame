@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "SGBaseCharacter.h"
-#include "SurvivalGame/Interfaces/SGInteractableInterface.h"
 #include "SGPlayerCharacter.generated.h"
 
+class UInventoryWidget;
 DECLARE_DELEGATE_TwoParams(FInteractableDetectedSignature, bool, FText);
 /**
  * 
@@ -19,6 +19,9 @@ class SURVIVALGAME_API ASGPlayerCharacter : public ASGBaseCharacter
 public:
 
 	ASGPlayerCharacter(const FObjectInitializer& ObjectInitializer);
+	void CreateInventoryWidget();
+
+	virtual void BeginPlay() override;
 
 	FInteractableDetectedSignature InteractableDetected;
 
@@ -30,7 +33,11 @@ public:
 
 	virtual void Interact() override;
 
+	virtual void UseInventory() override;
+
 	virtual void Tick(float DeltaSeconds) override;
+
+	FORCEINLINE UInventoryWidget* GetInventoryWidget() const { return InventoryWidget; }
 	
 protected:
 
@@ -42,6 +49,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Interactable parameters")
 	float InteractTraceLength = 300.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="InventoryWidgetClass")
+	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void OnStartSprint();
@@ -50,6 +60,12 @@ protected:
 	void OnStopSprint();
 
 private:
+
+	UPROPERTY()
+	UInventoryWidget* InventoryWidget;
+
+	UPROPERTY()
+	bool bIsInventoryVisible = false;
 
 	UPROPERTY()
 	AActor* InteractableLineObject;

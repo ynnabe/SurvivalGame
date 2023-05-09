@@ -64,6 +64,47 @@ void ASGPlayerController::SetupInputComponent()
 		{
 			PlayerEnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ASGPlayerController::Interact);
 		}
+		if(Inventory)
+		{
+			PlayerEnhancedInputComponent->BindAction(Inventory, ETriggerEvent::Started, this, &ASGPlayerController::UseInventory);
+		}
+	}
+}
+
+void ASGPlayerController::Client_ToggleInventoryMapping_Implementation(bool State)
+{
+	if(State)
+	{
+		if(APlayerController* PC = Cast<APlayerController>(this))
+		{
+			if(UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
+			{
+				Subsystem->ClearAllMappings();
+
+				Subsystem->AddMappingContext(InventoryMappingContext, BaseMappingPriority);
+			}
+
+			PC->bShowMouseCursor = true;
+			FInputModeGameAndUI InputMode;
+			InputMode.SetHideCursorDuringCapture(false);
+			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
+			PC->SetInputMode(InputMode);
+		}
+	}
+	else
+	{
+		if(APlayerController* PC = Cast<APlayerController>(this))
+		{
+			if(UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
+			{
+				Subsystem->ClearAllMappings();
+
+				Subsystem->AddMappingContext(BaseMappingContext, BaseMappingPriority);
+			}
+
+			PC->bShowMouseCursor = false;
+			PC->SetInputMode(FInputModeGameOnly {});
+		}
 	}
 }
 
@@ -125,11 +166,17 @@ void ASGPlayerController::Interact()
 	CachedBaseCharacter->Interact();
 }
 
+void ASGPlayerController::UseInventory()
+{
+	if(CachedBaseCharacter.IsValid())
+	CachedBaseCharacter->UseInventory();
+}
+
 void ASGPlayerController::CreateAndInitializeWidgets()
 {
 	if(!IsValid(PlayerHUDWidget))
 	{
-		PlayerHUDWidget = CreateWidget<USGPlayerWidget>(GetWorld(), PlayerHUDWidgetClass);
+		PlayerHUDWidget = CreateWidget<USGPlayerWidget>(this, PlayerHUDWidgetClass);
 		if(IsValid(PlayerHUDWidget))
 		{
 			PlayerHUDWidget->AddToViewport();

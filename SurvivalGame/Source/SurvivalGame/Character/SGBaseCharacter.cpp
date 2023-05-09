@@ -2,6 +2,8 @@
 
 
 #include "SGBaseCharacter.h"
+
+#include "Controller/SGPlayerController.h"
 #include "Net/UnrealNetwork.h"
 #include "SurvivalGame/Components/Character/EquipmentComponent.h"
 #include "SurvivalGame/Components/Character/SGCharacterAttributes.h"
@@ -98,7 +100,8 @@ void ASGBaseCharacter::Server_StopAttributesSprint_Implementation()
 void ASGBaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	PlayerController = Cast<ASGPlayerController>(GetController());
 }
 
 

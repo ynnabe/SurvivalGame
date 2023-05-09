@@ -8,6 +8,7 @@
 #include "SurvivalGame/UI/SGPlayerWidget.h"
 #include "SGBaseCharacter.generated.h"
 
+class ASGPlayerController;
 class UEquipmentComponent;
 class USGCharacterAttributes;
 class USGCharacterMovementComponent;
@@ -27,6 +28,7 @@ public:
 	virtual void Landed(const FHitResult& Hit) override;
 
 	virtual void Interact();
+	virtual void UseInventory() {};
 
 	virtual void StartSprint();
 	virtual void StopSprint();
@@ -40,8 +42,13 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_StopAttributesSprint();
 
+	UFUNCTION(BlueprintPure)
 	FORCEINLINE USGCharacterAttributes* GetCharacterAttributes() const { return SGCharacterAttributes; }
+
+	UFUNCTION(BlueprintPure)
 	FORCEINLINE UEquipmentComponent* GetEquipmentComponent() const { return SGEquipmentComponent; }
+
+	FORCEINLINE ASGPlayerController* GetPlayerController() const { return PlayerController; }
 	
 	UPROPERTY(Replicated)
 	bool bIsJumping = false;
@@ -76,6 +83,9 @@ private:
 
 	UPROPERTY()
 	USGPlayerWidget* PlayerHUDWidget = nullptr;
+
+	UPROPERTY()
+	ASGPlayerController* PlayerController;
 
 
 	FTimerHandle CDStaminaTimer;

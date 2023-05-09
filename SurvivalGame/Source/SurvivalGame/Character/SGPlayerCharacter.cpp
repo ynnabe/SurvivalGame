@@ -4,9 +4,11 @@
 #include "SGPlayerCharacter.h"
 
 #include "Camera/CameraComponent.h"
+#include "Controller/SGPlayerController.h"
 #include "SurvivalGame/Actors/Items/Item.h"
 #include "SurvivalGame/Components/Character/SGCharacterMovementComponent.h"
 #include "SurvivalGame/Interfaces/SGInteractableInterface.h"
+#include "SurvivalGame/UI/Inventory/InventoryWidget.h"
 
 ASGPlayerCharacter::ASGPlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<USGCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
@@ -19,6 +21,19 @@ ASGPlayerCharacter::ASGPlayerCharacter(const FObjectInitializer& ObjectInitializ
 	FPSkeletalMeshComponent->SetupAttachment(RootComponent);
 	FPSkeletalMeshComponent->SetOnlyOwnerSee(true);
 	GetMesh()->SetCastHiddenShadow(true);
+}
+
+void ASGPlayerCharacter::CreateInventoryWidget()
+{
+	InventoryWidget = CreateWidget<UInventoryWidget>(GetPlayerController(), InventoryWidgetClass);
+	InventoryWidget->FillData(this);
+}
+
+void ASGPlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	CreateInventoryWidget();
 }
 
 void ASGPlayerCharacter::Move(const FInputActionValue& Value)
@@ -71,6 +86,31 @@ void ASGPlayerCharacter::Interact()
 			Interface->InteractPure(this);
 		}
 	}
+}
+
+void ASGPlayerCharacter::UseInventory()
+{
+	Super::UseInventory();
+
+	if(!IsValid(InventoryWidget))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("InventoryWidget is not vaild!")));
+		return;
+	}
+
+	if(InventoryWidget->IsVisible())
+	{
+		InventoryWidget->RemoveFromParent();
+		GetPlayerController()->Client_ToggleInventoryMapping(false);
+		GetPlayerController()->GetPlayerWidget()->AddToViewport();
+	}
+	else
+	{
+		InventoryWidget->AddToViewport();
+		GetPlayerController()->Client_ToggleInventoryMapping(true);
+		GetPlayerController()->GetPlayerWidget()->RemoveFromParent();
+	}
+
 }
 
 void ASGPlayerCharacter::Tick(float DeltaSeconds)

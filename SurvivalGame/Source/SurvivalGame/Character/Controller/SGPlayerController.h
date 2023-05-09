@@ -24,8 +24,13 @@ public:
 	
 	virtual void SetupInputComponent() override;
 
+	FORCEINLINE USGPlayerWidget* GetPlayerWidget() const { return PlayerHUDWidget; }
+
 	UFUNCTION(Client, Reliable)
 	void Client_SetupEI();
+
+	UFUNCTION(Client, Reliable)
+	void Client_ToggleInventoryMapping(bool State);
 
 protected:
 
@@ -44,11 +49,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Controls|Input actions")
 	UInputAction* InteractAction;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Controls|Input actions")
+	UInputAction* Inventory;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Controls|Input mapping")
 	UInputMappingContext* BaseMappingContext;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Controls|Input mapping")
 	int32 BaseMappingPriority = 0;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Controls|Input mapping")
+	UInputMappingContext* InventoryMappingContext;
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -57,6 +68,7 @@ protected:
 	void StartSprint();
 	void StopSprint();
 	void Interact();
+	void UseInventory();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widgets")
 	TSubclassOf<USGPlayerWidget> PlayerHUDWidgetClass;
