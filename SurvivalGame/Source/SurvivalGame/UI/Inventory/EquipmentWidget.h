@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "EquipmentWidget.generated.h"
 
+class USGInventoryComponent;
+class UInventoryGridWidget;
 class UTextBlock;
 class UImage;
 class UInventorySlotWidget;
@@ -17,5 +19,13 @@ UCLASS()
 class SURVIVALGAME_API UEquipmentWidget : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
 	
+	void OnSetEquipment(USGInventoryComponent* InventoryComponent, FVector2d& FinishSize);
+
+protected:
+
+	UPROPERTY(meta=(BindWidget))
+	UInventoryGridWidget* GridWidget;
 };

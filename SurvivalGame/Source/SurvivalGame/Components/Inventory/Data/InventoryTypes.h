@@ -3,6 +3,7 @@
 #pragma once
 
 #include "SurvivalGame/Actors/Items/Item.h"
+#include "Math/Vector2D.h"
 #include "InventoryTypes.generated.h"
 
 USTRUCT(BlueprintType)
@@ -36,6 +37,39 @@ struct FInventoryRow
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FInventorySlot> Row;
+};
+
+USTRUCT(BlueprintType)
+struct FGridLine
+{
+	GENERATED_BODY()
+
+	FGridLine()
+	{
+		StartPoint = FVector2d(0.0f, 0.0f);
+		EndPoint = FVector2d(0.0f, 0.0f);
+	}
+
+	FGridLine(FVector2d Start, FVector2d End)
+	{
+		StartPoint = Start;
+		EndPoint = End;
+	}
+	
+	FVector2d StartPoint;
+	FVector2d EndPoint;
+};
+
+USTRUCT(BlueprintType)
+struct FInventoryTile
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 X;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 Y;
 };
 
 UENUM()

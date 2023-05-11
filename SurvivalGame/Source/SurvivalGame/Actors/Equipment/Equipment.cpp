@@ -24,8 +24,6 @@ void AEquipment::InteractPure(ASGBaseCharacter* Character)
 	UEquipmentComponent* CharacterEquipmentComponent = Character->GetEquipmentComponent();
 	if(CharacterEquipmentComponent->SetItemInSlot(this))
 	{
-		ASGPlayerCharacter* PlayerCharacter = Cast<ASGPlayerCharacter>(Character);
-		PlayerCharacter->GetInventoryWidget()->FillData(PlayerCharacter);
 		Destroy();
 	}
 	else

@@ -18,14 +18,23 @@ public:
 
 	FORCEINLINE TMap<int32, FInventoryRow>& GetItems() { return InventorySlots; }
 
+	FORCEINLINE int32 GetColumns() const { return Columns; }
+	FORCEINLINE int32 GetRows() const { return Rows; }
+
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory | Parameters", DisplayName="Кол-во слотов в длину")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 HeightSlots;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory | Parameters", DisplayName="Кол-во слотов в ширину")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 WidthSlots;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory | Parameters", DisplayName="Кол-во слотов в длину")
+	int32 Columns;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory | Parameters", DisplayName="Кол-во слотов в ширину")
+	int32 Rows;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Inventory | Slots")
 	TMap<int32, FInventoryRow> InventorySlots;

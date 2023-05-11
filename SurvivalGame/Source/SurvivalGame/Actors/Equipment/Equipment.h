@@ -23,6 +23,7 @@ public:
 	virtual FText GetItemName() const override;
 
 	FORCEINLINE EEquipmentType GetType() const { return Type; }
+	FORCEINLINE USGInventoryComponent* GetInventoryComponent() { return InventoryComponent; }
 
 #pragma region InteractableInterface
 	virtual void InteractPure(ASGBaseCharacter* Character) override;

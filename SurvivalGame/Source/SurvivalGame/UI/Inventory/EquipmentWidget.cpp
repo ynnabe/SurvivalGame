@@ -3,3 +3,11 @@
 
 #include "EquipmentWidget.h"
 
+#include "InventoryGridWidget.h"
+
+void UEquipmentWidget::OnSetEquipment(USGInventoryComponent* InventoryComponent, FVector2d& FinishSize)
+{
+	FVector2d TempFinishSize;
+	GridWidget->InitializeGrid(InventoryComponent, TempFinishSize);
+	FinishSize = TempFinishSize;
+}

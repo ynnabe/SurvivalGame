@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "EquipmentComponent.generated.h"
 
+class ASGPlayerCharacter;
+
 enum EquipmentSlot
 {
 	Torso,
@@ -39,6 +41,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Equipment slots")
 	AEquipment* BackpackSlot;
+
+private:
+
+	TWeakObjectPtr<ASGPlayerCharacter> CachedPlayer;
 
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

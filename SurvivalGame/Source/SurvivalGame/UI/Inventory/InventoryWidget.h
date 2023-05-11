@@ -6,6 +6,10 @@
 #include "Blueprint/UserWidget.h"
 #include "InventoryWidget.generated.h"
 
+class UCanvasPanel;
+class USGInventoryComponent;
+class UEquipmentWidget;
+class UInventoryGridWidget;
 class ASGPlayerCharacter;
 /**
  * 
@@ -16,8 +20,16 @@ class SURVIVALGAME_API UInventoryWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	
+	void SetTorsoEquipmentWidget(USGInventoryComponent* InventoryComponent);
+	void SetBackpackEquipmentWidget(USGInventoryComponent* InventoryComponent);
 
-	UFUNCTION(BlueprintNativeEvent)
-	void FillData(ASGPlayerCharacter* Owner);
+protected:
+
+	UPROPERTY(meta=(BindWidget))
+	UEquipmentWidget* TorsoEquipmentWidget;
+
+	UPROPERTY(meta=(BindWidget))
+	UEquipmentWidget* BackpackEquipmentWidget;
 	
 };

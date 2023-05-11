@@ -26,7 +26,6 @@ ASGPlayerCharacter::ASGPlayerCharacter(const FObjectInitializer& ObjectInitializ
 void ASGPlayerCharacter::CreateInventoryWidget()
 {
 	InventoryWidget = CreateWidget<UInventoryWidget>(GetPlayerController(), InventoryWidgetClass);
-	InventoryWidget->FillData(this);
 }
 
 void ASGPlayerCharacter::BeginPlay()

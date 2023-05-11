@@ -4,6 +4,8 @@
 #include "EquipmentComponent.h"
 
 #include "SurvivalGame/Actors/Equipment/Equipment.h"
+#include "SurvivalGame/Character/SGPlayerCharacter.h"
+#include "SurvivalGame/UI/Inventory/InventoryWidget.h"
 
 UEquipmentComponent::UEquipmentComponent()
 {
@@ -51,6 +53,7 @@ bool UEquipmentComponent::SetItemInSlot(AEquipment* EquipmentItem)
 				if(!IsValid(TorsoSlot))
 				{
 					TorsoSlot = EquipmentItem;
+					CachedPlayer->GetInventoryWidget()->SetTorsoEquipmentWidget(TorsoSlot->GetInventoryComponent());
 					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("%s equiped in Torso slot"), *EquipmentItem->GetItemName().ToString()));
 					return true;
 				}
@@ -61,6 +64,7 @@ bool UEquipmentComponent::SetItemInSlot(AEquipment* EquipmentItem)
 				if(!IsValid(BackpackSlot))
 				{
 					BackpackSlot = EquipmentItem;
+					CachedPlayer->GetInventoryWidget()->SetBackpackEquipmentWidget(BackpackSlot->GetInventoryComponent());
 					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("%s equiped in Backpack slot"), *EquipmentItem->GetItemName().ToString()));
 					return true;
 				}
@@ -75,7 +79,7 @@ void UEquipmentComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	
+	CachedPlayer = Cast<ASGPlayerCharacter>(GetOwner());
 }
 
 void UEquipmentComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
