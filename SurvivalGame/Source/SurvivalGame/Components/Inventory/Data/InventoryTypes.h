@@ -65,6 +65,18 @@ struct FInventoryTile
 {
 	GENERATED_BODY()
 
+	FInventoryTile()
+	{
+		X = -0;
+		Y = -0;
+	}
+
+	FInventoryTile(int32 X_in, int32 Y_in)
+	{
+		this->X = X_in;
+		this->Y = Y_in;
+	}
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 X;
 

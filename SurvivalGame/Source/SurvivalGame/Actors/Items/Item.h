@@ -15,7 +15,11 @@ class SURVIVALGAME_API AItem : public AActor, public ISGInteractableInterface
 public:	
 	AItem();
 
+	bool IsEmpty() const;
+
 	FORCEINLINE virtual FText GetItemName() const { return Name; }
+
+	FORCEINLINE FIntPoint GetItemDimensions() const { return ItemDimensions; }
 
 #pragma region InteractableInterface
 	void DetectedByTraceInteract_Implementation() override;
@@ -36,10 +40,7 @@ protected:
 	UStaticMeshComponent* MeshComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
-	int32 HeightSlotCapacity;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
-	int32 WidthSlotCapacity;
+	FIntPoint ItemDimensions;
 
 public:	
 	virtual void Tick(float DeltaTime) override;

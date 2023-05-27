@@ -16,19 +16,20 @@ class SURVIVALGAME_API USGInventoryComponent : public UActorComponent
 public:	
 	USGInventoryComponent();
 
-	FORCEINLINE TMap<int32, FInventoryRow>& GetItems() { return InventorySlots; }
+	bool TryAddItem(AItem* ItemToAdd);
+	bool IsRoomAvailable(AItem* Item, int32 TopLeftIndex);
+	AItem* GetItemAtIndex(int32 Index);
+	FInventoryTile IndexToTile(int32 Index);
+	int32 TileToIndex(FInventoryTile Tile);
 
+	void AddItem(AItem* ItemToAdd, int32 TopLeftIndex);
+
+	FORCEINLINE TArray<AItem*> GetItems() { return Items; }
 	FORCEINLINE int32 GetColumns() const { return Columns; }
 	FORCEINLINE int32 GetRows() const { return Rows; }
 
 protected:
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int32 HeightSlots;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int32 WidthSlots;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory | Parameters", DisplayName="Кол-во слотов в длину")
 	int32 Columns;
@@ -36,11 +37,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory | Parameters", DisplayName="Кол-во слотов в ширину")
 	int32 Rows;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Inventory | Slots")
-	TMap<int32, FInventoryRow> InventorySlots;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory")
+	TArray<AItem*> Items;
 
-public:	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+private:	
+
+	bool bIsDirty = false;
 
 		
 };
