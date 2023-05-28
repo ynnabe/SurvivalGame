@@ -7,6 +7,7 @@
 #include "SurvivalGame/Components/Inventory/Data/InventoryTypes.h"
 #include "SGInventoryComponent.generated.h"
 
+DECLARE_DELEGATE(FOnInventoryChangedSignature);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SURVIVALGAME_API USGInventoryComponent : public UActorComponent
@@ -16,15 +17,18 @@ class SURVIVALGAME_API USGInventoryComponent : public UActorComponent
 public:	
 	USGInventoryComponent();
 
+	FOnInventoryChangedSignature OnInventoryChanged;
+
 	bool TryAddItem(AItem* ItemToAdd);
 	bool IsRoomAvailable(AItem* Item, int32 TopLeftIndex);
 	AItem* GetItemAtIndex(int32 Index);
-	FInventoryTile IndexToTile(int32 Index);
+	FInventoryTile IndexToTile(int32 Index) const;
 	int32 TileToIndex(FInventoryTile Tile);
 
 	void AddItem(AItem* ItemToAdd, int32 TopLeftIndex);
+	void RemoveItem(AItem* ItemToRemove);
 
-	FORCEINLINE TArray<AItem*> GetItems() { return Items; }
+	TMap<AItem, FInventoryTile> GetItemsAsMap() const;
 	FORCEINLINE int32 GetColumns() const { return Columns; }
 	FORCEINLINE int32 GetRows() const { return Rows; }
 
@@ -39,6 +43,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory")
 	TArray<AItem*> Items;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory")
+	TSubclassOf<AItem> ItemBaseClass;
 
 private:	
 

@@ -43,8 +43,7 @@ bool USGInventoryComponent::IsRoomAvailable(AItem* Item, int32 TopLeftIndex)
 			FInventoryTile OutTile(X, Y);
 			if(OutTile.X > 0 && OutTile.Y > 0)
 			{
-				AItem* ItemAtIndex = GetItemAtIndex(TileToIndex(OutTile));
-				if(!ItemAtIndex->IsEmpty())
+				if(AItem* ItemAtIndex = GetItemAtIndex(TileToIndex(OutTile)))
 				{
 					return false;
 				}
@@ -65,7 +64,7 @@ AItem* USGInventoryComponent::GetItemAtIndex(int32 Index)
 	return nullptr;
 }
 
-FInventoryTile USGInventoryComponent::IndexToTile(int32 Index)
+FInventoryTile USGInventoryComponent::IndexToTile(int32 Index) const
 {
 	return FInventoryTile(Index % Columns, Index / Columns);
 }
@@ -90,7 +89,37 @@ void USGInventoryComponent::AddItem(AItem* ItemToAdd, int32 TopLeftIndex)
 		}
 	}
 
+	if(OnInventoryChanged.IsBound())
+	{
+		OnInventoryChanged.Execute();
+	}
+
 	bIsDirty = true;
+}
+
+void USGInventoryComponent::RemoveItem(AItem* ItemToRemove)
+{
+	
+}
+
+TMap<AItem, FInventoryTile> USGInventoryComponent::GetItemsAsMap() const
+{
+	TMap<AItem, FInventoryTile> AllItems;
+
+	for(int Index = 0; Index < Items.Num(); Index++)
+	{
+		if(IsValid(Items[Index]))
+		{
+			if(!AllItems.Contains(Items[Index]))
+			{
+				FInventoryTile Tile = IndexToTile(Index);
+
+				AllItems.Add(Items[Index], Tile);
+			}
+		}
+	}
+	
+	return AllItems;
 }
 
 void USGInventoryComponent::BeginPlay()
@@ -99,8 +128,7 @@ void USGInventoryComponent::BeginPlay()
 
 	for(int Index = 0; Index <= Columns * Rows; Index++)
 	{
-		AItem* Item;
-		Items.Add(Item);
+		Items.Add(nullptr);
 	}
 }
 

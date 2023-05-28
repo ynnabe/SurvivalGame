@@ -4,6 +4,7 @@
 #include "InventoryGridWidget.h"
 
 #include "EquipmentWidget.h"
+#include "ItemWidget.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
@@ -20,6 +21,9 @@ void UInventoryGridWidget::InitializeGrid(USGInventoryComponent* InventoryCompon
 	GridBorderAsCanvasSlot->SetSize(NewSize);
 
 	CreateLineSegments();
+	Refresh();
+
+	CachedInventoryComponent->OnInventoryChanged.BindUObject(this, &UInventoryGridWidget::Refresh);
 }
 
 int32 UInventoryGridWidget::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
@@ -36,6 +40,11 @@ int32 UInventoryGridWidget::NativePaint(const FPaintArgs& Args, const FGeometry&
 	}
 	return Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle,
 	                          bParentEnabled);
+}
+
+void UInventoryGridWidget::OnItemRemoved(AItem* ItemToRemove)
+{
+	CachedInventoryComponent->RemoveItem(ItemToRemove);
 }
 
 void UInventoryGridWidget::CreateLineSegments()
@@ -56,5 +65,24 @@ void UInventoryGridWidget::CreateLineSegments()
 		FVector2d EndLine = FVector2d(CachedInventoryComponent->GetColumns() * TileSize, Y);
 		FGridLine GridLine(StartLine, EndLine);
 		Lines.Add(GridLine);
+	}
+}
+
+void UInventoryGridWidget::Refresh()
+{
+	GridCanvasPanel->ClearChildren();
+
+	TMap<AItem*, FInventoryTile> ItemsMap = CachedInventoryComponent->GetItemsAsMap();
+
+	for (auto ItemMap : ItemsMap)
+	{
+		UItemWidget* CurrentItemWidget = CreateWidget<UItemWidget>(GetOwningPlayer(), ItemWidgetClass);
+		CurrentItemWidget->SetItem(ItemMap.Key);
+		CurrentItemWidget->SetTileSize(TileSize);
+		CurrentItemWidget->OnRemoved.BindUObject(this, &UInventoryGridWidget::OnItemRemoved);
+		UCanvasPanelSlot* ItemWidgetAsCanvasSlot = Cast<UCanvasPanelSlot>(GridCanvasPanel->AddChild(CurrentItemWidget));
+		ItemWidgetAsCanvasSlot->SetAutoSize(true);
+		FVector2d NewPosition = FVector2d(ItemMap.Value.X * TileSize, ItemMap.Value.Y * TileSize);
+		ItemWidgetAsCanvasSlot->SetPosition(NewPosition);
 	}
 }

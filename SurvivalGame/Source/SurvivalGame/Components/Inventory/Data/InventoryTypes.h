@@ -14,11 +14,6 @@ struct FInventorySlot
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	AItem* Item;
 
-	AItem* IsItemInSlot() const
-	{
-		return Item;
-	}
-
 	FInventorySlot()
 	{
 		this->Item = nullptr;

@@ -15,11 +15,38 @@ class SURVIVALGAME_API AItem : public AActor, public ISGInteractableInterface
 public:	
 	AItem();
 
+	AItem(const AItem* Other)
+	{
+		this->Name = Other->Name;
+		this->NameCheck = Other->NameCheck;
+		this->Image = Other->Image;
+		this->ImageRotated = Other->ImageRotated;
+		this->MeshComponent = Other->MeshComponent;
+		this->bIsRotated = Other->bIsRotated;
+		this->ItemDimensions = Other->ItemDimensions;
+	}
+
+	AItem operator =(const AItem& Other)
+	{
+		this->Name = Other.Name;
+		this->NameCheck = Other.NameCheck;
+		this->Image = Other.Image;
+		this->ImageRotated = Other.ImageRotated;
+		this->MeshComponent = Other.MeshComponent;
+		this->bIsRotated = Other.bIsRotated;
+		this->ItemDimensions = Other.ItemDimensions;
+		return this;
+	}
+
 	bool IsEmpty() const;
 
 	FORCEINLINE virtual FText GetItemName() const { return Name; }
 
 	FORCEINLINE FIntPoint GetItemDimensions() const { return ItemDimensions; }
+
+	UMaterialInterface* GetItemIcon() const { return bIsRotated ? ImageRotated : Image; }
+
+	void SetNameCheck(FName NewName);
 
 #pragma region InteractableInterface
 	void DetectedByTraceInteract_Implementation() override;
@@ -31,18 +58,25 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
-	FText Name;
+	FText Name = FText();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
-	UTexture2D* Image;
+	FName NameCheck = NAME_None;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
-	UStaticMeshComponent* MeshComponent;
+	UMaterialInterface* Image = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
-	FIntPoint ItemDimensions;
+	UMaterialInterface* ImageRotated = nullptr;
 
-public:	
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
+	UStaticMeshComponent* MeshComponent = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
+	FIntPoint ItemDimensions = FIntPoint();
+
+private:
+
+	bool bIsRotated = false;
 
 };

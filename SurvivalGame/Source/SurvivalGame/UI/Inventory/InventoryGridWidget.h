@@ -8,6 +8,7 @@
 #include "Components/CanvasPanel.h"
 #include "InventoryGridWidget.generated.h"
 
+class UItemWidget;
 class UEquipmentWidget;
 class UBorder;
 class USGInventoryComponent;
@@ -26,6 +27,7 @@ public:
 
 	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
 
+
 protected:
 
 	UPROPERTY(meta=(BindWidget))
@@ -37,11 +39,20 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float TileSize;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UItemWidget> ItemWidgetClass;
+
 private:
 
+	UFUNCTION()
+	void OnItemRemoved(AItem* ItemToRemove);
+	
 	void CreateLineSegments();
+
+	void Refresh();
 
 	TArray<FGridLine> Lines;
 
-	TWeakObjectPtr<USGInventoryComponent> CachedInventoryComponent;
+	UPROPERTY()
+	USGInventoryComponent* CachedInventoryComponent;
 };

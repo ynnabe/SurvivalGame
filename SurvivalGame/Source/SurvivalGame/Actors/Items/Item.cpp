@@ -14,14 +14,30 @@ AItem::AItem()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 }
 
+AItem::AItem(FText NameIn, FName NameCheckIn, UMaterialInterface* ImageIn, UMaterialInterface* ImageVerticalIn,
+	FIntPoint Dimensions)
+{
+	Name = NameIn;
+	NameCheck = NameCheckIn;
+	Image = ImageIn;
+	ImageRotated = ImageVerticalIn;
+	ItemDimensions = Dimensions;
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
+}
+
 bool AItem::IsEmpty() const
 {
-	if(IsValid(Image))
+	if(NameCheck == NAME_None)
 	{
 		return true;
 	}
 
 	return false;
+}
+
+void AItem::SetNameCheck(FName NewName)
+{
+	NameCheck = NewName;
 }
 
 void AItem::DetectedByTraceInteract_Implementation()
@@ -30,19 +46,15 @@ void AItem::DetectedByTraceInteract_Implementation()
 
 void AItem::InteractPure(ASGBaseCharacter* Character)
 {
-	Character->GetEquipmentComponent()->GetTorsoSlot()->GetInventoryComponent()->TryAddItem(this);
-	Destroy();
+	if(Character->GetEquipmentComponent()->GetTorsoSlot()->GetInventoryComponent()->TryAddItem(this))
+	{
+		Destroy();
+	}
 }
 
 void AItem::BeginPlay()
 {
 	Super::BeginPlay();
 	
-}
-
-void AItem::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
