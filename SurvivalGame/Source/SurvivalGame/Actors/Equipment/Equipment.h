@@ -23,7 +23,9 @@ public:
 	virtual FText GetItemName() const override;
 
 	FORCEINLINE EEquipmentType GetType() const { return Type; }
-	FORCEINLINE USGInventoryComponent* GetInventoryComponent() { return InventoryComponent; }
+	FORCEINLINE USGInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+
+	virtual void DetectedByTraceInteract_Implementation() override;
 
 #pragma region InteractableInterface
 	virtual void InteractPure(ASGBaseCharacter* Character) override;

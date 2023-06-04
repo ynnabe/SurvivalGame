@@ -87,7 +87,6 @@ private:
 	UPROPERTY()
 	ASGPlayerController* PlayerController;
 
-
 	FTimerHandle CDStaminaTimer;
 
 };

@@ -19,30 +19,30 @@ public:
 
 	FOnInventoryChangedSignature OnInventoryChanged;
 
-	bool TryAddItem(AItem* ItemToAdd);
-	bool IsRoomAvailable(AItem* Item, int32 TopLeftIndex);
-	AItem* GetItemAtIndex(int32 Index);
+	bool TryAddItem(UInventoryItem* ItemToAdd);
+	bool IsRoomAvailable(UInventoryItem* Item, int32 TopLeftIndex);
+	UInventoryItem* GetItemAtIndex(int32 Index);
 	FInventoryTile IndexToTile(int32 Index) const;
-	int32 TileToIndex(FInventoryTile Tile);
+	int32 TileToIndex(FInventoryTile* Tile);
 
-	void AddItem(AItem* ItemToAdd, int32 TopLeftIndex);
-	void RemoveItem(AItem* ItemToRemove);
+	void AddItem(UInventoryItem* ItemToAdd, int32 TopLeftIndex);
+	void RemoveItem(UInventoryItem* ItemToRemove);
 
-	TMap<AItem, FInventoryTile> GetItemsAsMap() const;
+	TMap<UInventoryItem*, FInventoryTile> GetItemsAsMap() const;
 	FORCEINLINE int32 GetColumns() const { return Columns; }
 	FORCEINLINE int32 GetRows() const { return Rows; }
 
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory | Parameters", DisplayName="Кол-во слотов в длину")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory | Parameters", DisplayName="Кол-во слотов в ширину")
 	int32 Columns;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory | Parameters", DisplayName="Кол-во слотов в ширину")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory | Parameters", DisplayName="Кол-во слотов в длину")
 	int32 Rows;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory")
-	TArray<AItem*> Items;
+	TArray<UInventoryItem*> Items;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory")
 	TSubclassOf<AItem> ItemBaseClass;

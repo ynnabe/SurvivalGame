@@ -14,6 +14,44 @@
 #include "Components/Image.h"
 #include "Components/SizeBox.h"
 #include "SurvivalGame/Actors/Items/Item.h"
+#include "SurvivalGame/Inventory/InventoryItem.h"
+
+void UItemWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+	
+	BackgroundBorder->SetBrushColor(HoverColor);
+}
+
+void UItemWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+	
+	BackgroundBorder->SetBrushColor(UnhoverColor);
+}
+
+FReply UItemWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	FEventReply Reply = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton);
+	return Reply.NativeReply;
+}
+
+void UItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent,
+                                       UDragDropOperation*& OutOperation)
+{
+	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
+
+	UDragDropOperation* DragDropOperation = Cast<UDragDropOperation>(UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass()));
+
+	DragDropOperation->Payload = Item;
+	DragDropOperation->DefaultDragVisual = this;
+
+	OnRemoved.Execute(Item);
+
+	RemoveFromParent();
+
+	OutOperation = DragDropOperation;
+}
 
 void UItemWidget::NativeOnInitialized()
 {
@@ -22,7 +60,7 @@ void UItemWidget::NativeOnInitialized()
 	GetWorld()->GetTimerManager().SetTimer(InitializeTimerHandle, [=]()
 	{
 		Refresh();
-	}, 2.0f, false);
+	}, 0.001f, false);
 }
 
 void UItemWidget::Refresh()
@@ -49,7 +87,7 @@ void UItemWidget::SetItemIcon()
 	
 }
 
-void UItemWidget::SetItem(AItem* ItemIn)
+void UItemWidget::SetItem(UInventoryItem* ItemIn)
 {
 	Item = ItemIn;
 }

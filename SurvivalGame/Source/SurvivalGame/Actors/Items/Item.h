@@ -7,6 +7,7 @@
 #include "SurvivalGame/Interfaces/SGInteractableInterface.h"
 #include "Item.generated.h"
 
+class UInventoryItem;
 UCLASS()
 class SURVIVALGAME_API AItem : public AActor, public ISGInteractableInterface
 {
@@ -15,7 +16,7 @@ class SURVIVALGAME_API AItem : public AActor, public ISGInteractableInterface
 public:	
 	AItem();
 
-	AItem(const AItem* Other)
+	/*AItem(const AItem* Other)
 	{
 		this->Name = Other->Name;
 		this->NameCheck = Other->NameCheck;
@@ -24,29 +25,18 @@ public:
 		this->MeshComponent = Other->MeshComponent;
 		this->bIsRotated = Other->bIsRotated;
 		this->ItemDimensions = Other->ItemDimensions;
-	}
+	}*/
 
-	AItem operator =(const AItem& Other)
-	{
-		this->Name = Other.Name;
-		this->NameCheck = Other.NameCheck;
-		this->Image = Other.Image;
-		this->ImageRotated = Other.ImageRotated;
-		this->MeshComponent = Other.MeshComponent;
-		this->bIsRotated = Other.bIsRotated;
-		this->ItemDimensions = Other.ItemDimensions;
-		return this;
-	}
-
-	bool IsEmpty() const;
+	UInventoryItem* GetItem() const { return Item; }
 
 	FORCEINLINE virtual FText GetItemName() const { return Name; }
+	FORCEINLINE bool IsDetected() const { return bIsDetected; }
 
-	FORCEINLINE FIntPoint GetItemDimensions() const { return ItemDimensions; }
+	void SetDetect(bool NewValue);
 
-	UMaterialInterface* GetItemIcon() const { return bIsRotated ? ImageRotated : Image; }
+	/*FORCEINLINE FIntPoint GetItemDimensions() const { return ItemDimensions; }
 
-	void SetNameCheck(FName NewName);
+	UMaterialInterface* GetItemIcon() const { return bIsRotated ? ImageRotated : Image; }*/
 
 #pragma region InteractableInterface
 	void DetectedByTraceInteract_Implementation() override;
@@ -57,6 +47,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item")
+	UInventoryItem* Item;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
 	FText Name = FText();
 
@@ -64,19 +57,26 @@ protected:
 	FName NameCheck = NAME_None;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
-	UMaterialInterface* Image = nullptr;
+	UMaterialInterface* Image;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
-	UMaterialInterface* ImageRotated = nullptr;
+	UMaterialInterface* ImageRotated;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
-	UStaticMeshComponent* MeshComponent = nullptr;
+	UStaticMeshComponent* MeshComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
 	FIntPoint ItemDimensions = FIntPoint();
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
+	UMaterialInterface* OverlayMaterial;
+
 private:
 
-	bool bIsRotated = false;
+	UInventoryItem* SetupItem();
+
+	bool bIsDetected = false;
+
+	/*bool bIsRotated = false;*/
 
 };

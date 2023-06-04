@@ -19,12 +19,17 @@ FText AEquipment::GetItemName() const
 	return Super::GetItemName();
 }
 
+void AEquipment::DetectedByTraceInteract_Implementation()
+{
+	Super::DetectedByTraceInteract_Implementation();
+}
+
 void AEquipment::InteractPure(ASGBaseCharacter* Character)
 {
 	UEquipmentComponent* CharacterEquipmentComponent = Character->GetEquipmentComponent();
 	if(CharacterEquipmentComponent->SetItemInSlot(this))
 	{
-		Destroy();
+		//Destroy();
 	}
 	else
 	{

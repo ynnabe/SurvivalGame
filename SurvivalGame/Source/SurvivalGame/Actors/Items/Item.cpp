@@ -7,6 +7,7 @@
 #include "SurvivalGame/Character/SGBaseCharacter.h"
 #include "SurvivalGame/Components/Actor/SGInventoryComponent.h"
 #include "SurvivalGame/Components/Character/EquipmentComponent.h"
+#include "SurvivalGame/Inventory/InventoryItem.h"
 
 AItem::AItem()
 {
@@ -14,39 +15,29 @@ AItem::AItem()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 }
 
-AItem::AItem(FText NameIn, FName NameCheckIn, UMaterialInterface* ImageIn, UMaterialInterface* ImageVerticalIn,
-	FIntPoint Dimensions)
+void AItem::SetDetect(bool NewValue)
 {
-	Name = NameIn;
-	NameCheck = NameCheckIn;
-	Image = ImageIn;
-	ImageRotated = ImageVerticalIn;
-	ItemDimensions = Dimensions;
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
-}
-
-bool AItem::IsEmpty() const
-{
-	if(NameCheck == NAME_None)
-	{
-		return true;
-	}
-
-	return false;
-}
-
-void AItem::SetNameCheck(FName NewName)
-{
-	NameCheck = NewName;
+	bIsDetected = NewValue;
 }
 
 void AItem::DetectedByTraceInteract_Implementation()
 {
+	if(!IsDetected())
+	{
+		MeshComponent->SetOverlayMaterial(OverlayMaterial);
+		bIsDetected = true;
+	}
+	else
+	{
+		UMaterialInterface* EmptyMaterial = nullptr;
+		MeshComponent->SetOverlayMaterial(EmptyMaterial);
+		bIsDetected = false;
+	}
 }
 
 void AItem::InteractPure(ASGBaseCharacter* Character)
 {
-	if(Character->GetEquipmentComponent()->GetTorsoSlot()->GetInventoryComponent()->TryAddItem(this))
+	if(Character->GetEquipmentComponent()->GetTorsoSlot()->GetInventoryComponent()->TryAddItem(Item))
 	{
 		Destroy();
 	}
@@ -55,6 +46,20 @@ void AItem::InteractPure(ASGBaseCharacter* Character)
 void AItem::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Item = SetupItem();
+}
+
+UInventoryItem* AItem::SetupItem()
+{
+	UInventoryItem* ItemNew = NewObject<UInventoryItem>();
 	
+	ItemNew->Name = Name;
+	ItemNew->Image = Image;
+	ItemNew->ImageRotated = ImageRotated;
+	ItemNew->ItemDimensions = ItemDimensions;
+	ItemNew->MeshComponent = MeshComponent;
+	
+	return ItemNew;
 }
 

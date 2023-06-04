@@ -54,7 +54,6 @@ bool UEquipmentComponent::SetItemInSlot(AEquipment* EquipmentItem)
 				{
 					TorsoSlot = EquipmentItem;
 					CachedPlayer->GetInventoryWidget()->SetTorsoEquipmentWidget(TorsoSlot->GetInventoryComponent());
-					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("%s equiped in Torso slot"), *EquipmentItem->GetItemName().ToString()));
 					return true;
 				}
 				return false;
@@ -65,7 +64,6 @@ bool UEquipmentComponent::SetItemInSlot(AEquipment* EquipmentItem)
 				{
 					BackpackSlot = EquipmentItem;
 					CachedPlayer->GetInventoryWidget()->SetBackpackEquipmentWidget(BackpackSlot->GetInventoryComponent());
-					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("%s equiped in Backpack slot"), *EquipmentItem->GetItemName().ToString()));
 					return true;
 				}
 				return false;

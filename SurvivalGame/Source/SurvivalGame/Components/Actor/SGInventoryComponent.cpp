@@ -3,6 +3,7 @@
 
 #include "SGInventoryComponent.h"
 #include "SurvivalGame/Components/Inventory/Data/InventoryTypes.h"
+#include "SurvivalGame/Inventory/InventoryItem.h"
 #include "Kismet/KismetArrayLibrary.h"
 
 USGInventoryComponent::USGInventoryComponent()
@@ -11,14 +12,26 @@ USGInventoryComponent::USGInventoryComponent()
 
 }
 
-bool USGInventoryComponent::TryAddItem(AItem* ItemToAdd)
+bool USGInventoryComponent::TryAddItem(UInventoryItem* ItemToAdd)
 {
 	if(!IsValid(ItemToAdd))
 	{
 		return false;
 	}
 
-	for(int Index = 0; Index <= Items.Num(); Index++)
+	for(int Index = 0; Index < Items.Num(); Index++)
+	{
+		if(IsRoomAvailable(ItemToAdd, Index))
+		{
+			AddItem(ItemToAdd, Index);
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("Item added")));
+			return true;
+		}
+	}
+
+	ItemToAdd->Rotate();
+
+	for(int Index = 0; Index < Items.Num(); Index++)
 	{
 		if(IsRoomAvailable(ItemToAdd, Index))
 		{
@@ -31,22 +44,26 @@ bool USGInventoryComponent::TryAddItem(AItem* ItemToAdd)
 	return false;
 }
 
-bool USGInventoryComponent::IsRoomAvailable(AItem* Item, int32 TopLeftIndex)
+bool USGInventoryComponent::IsRoomAvailable(UInventoryItem* Item, int32 TopLeftIndex)
 {
 	FInventoryTile Tile = IndexToTile(TopLeftIndex);
 	FIntPoint ItemDimensions = Item->GetItemDimensions();
 
-	for(int X = Tile.X; X <= Tile.X + (ItemDimensions.X - 1); X++)
+	for(int X = Tile.X; X < Tile.X + (ItemDimensions.X); X++)
 	{
-		for(int Y = Tile.Y; Y <= Tile.Y + (ItemDimensions.Y - 1); Y++)
+		for(int Y = Tile.Y; Y < Tile.Y + (ItemDimensions.Y); Y++)
 		{
 			FInventoryTile OutTile(X, Y);
-			if(OutTile.X > 0 && OutTile.Y > 0)
+			if(OutTile.X >= 0 && OutTile.Y >= 0 && OutTile.X < Columns && OutTile.Y < Rows)
 			{
-				if(AItem* ItemAtIndex = GetItemAtIndex(TileToIndex(OutTile)))
+				if(GetItemAtIndex(TileToIndex(&OutTile)))
 				{
 					return false;
 				}
+			}
+			else
+			{
+				return false;
 			}
 		}
 	}
@@ -54,7 +71,7 @@ bool USGInventoryComponent::IsRoomAvailable(AItem* Item, int32 TopLeftIndex)
 	return true;
 }
 
-AItem* USGInventoryComponent::GetItemAtIndex(int32 Index)
+UInventoryItem* USGInventoryComponent::GetItemAtIndex(int32 Index)
 {
 	if(Items.IsValidIndex(Index))
 	{
@@ -69,22 +86,27 @@ FInventoryTile USGInventoryComponent::IndexToTile(int32 Index) const
 	return FInventoryTile(Index % Columns, Index / Columns);
 }
 
-int32 USGInventoryComponent::TileToIndex(FInventoryTile Tile)
+int32 USGInventoryComponent::TileToIndex(FInventoryTile* Tile)
 {
-	return Tile.X + Tile.Y * Columns;
+	if(Tile)
+	{
+		return Tile->X + Tile->Y * Columns;
+	}
+
+	return 0;
 }
 
-void USGInventoryComponent::AddItem(AItem* ItemToAdd, int32 TopLeftIndex)
+void USGInventoryComponent::AddItem(UInventoryItem* ItemToAdd, int32 TopLeftIndex)
 {
 	FInventoryTile Tile = IndexToTile(TopLeftIndex);
 	FIntPoint ItemDimensions = ItemToAdd->GetItemDimensions();
 
-	for(int X = Tile.X; X <= Tile.X + (ItemDimensions.X - 1); X++)
+	for(int X = Tile.X; X < Tile.X + (ItemDimensions.X); X++)
 	{
-		for(int Y = Tile.Y; Y <= Tile.Y + (ItemDimensions.Y - 1); Y++)
+		for(int Y = Tile.Y; Y < Tile.Y + (ItemDimensions.Y); Y++)
 		{
 			FInventoryTile OutTile(X, Y);
-			int32 IndexToInsert = TileToIndex(OutTile);
+			int32 IndexToInsert = TileToIndex(&OutTile);
 			Items[IndexToInsert] = ItemToAdd;
 		}
 	}
@@ -97,14 +119,26 @@ void USGInventoryComponent::AddItem(AItem* ItemToAdd, int32 TopLeftIndex)
 	bIsDirty = true;
 }
 
-void USGInventoryComponent::RemoveItem(AItem* ItemToRemove)
+void USGInventoryComponent::RemoveItem(UInventoryItem* ItemToRemove)
 {
-	
+	if(IsValid(ItemToRemove))
+	{
+		for (auto &Item : Items)
+		{
+			if(IsValid(Item))
+			{
+				if(Item == ItemToRemove)
+				{
+					Item = nullptr;
+				}
+			}
+		}
+	}
 }
 
-TMap<AItem, FInventoryTile> USGInventoryComponent::GetItemsAsMap() const
+TMap<UInventoryItem*, FInventoryTile> USGInventoryComponent::GetItemsAsMap() const
 {
-	TMap<AItem, FInventoryTile> AllItems;
+	TMap<UInventoryItem*, FInventoryTile> AllItems;
 
 	for(int Index = 0; Index < Items.Num(); Index++)
 	{
