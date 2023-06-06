@@ -5,6 +5,7 @@
 
 #include "SurvivalGame/Actors/Equipment/Equipment.h"
 #include "SurvivalGame/Character/SGPlayerCharacter.h"
+#include "SurvivalGame/Inventory/Equipment/EquipmentItem.h"
 #include "SurvivalGame/UI/Inventory/InventoryWidget.h"
 
 UEquipmentComponent::UEquipmentComponent()
@@ -13,7 +14,7 @@ UEquipmentComponent::UEquipmentComponent()
 	
 }
 
-bool UEquipmentComponent::EquipGear(EquipmentSlot Slot, AEquipment* Equipment)
+bool UEquipmentComponent::EquipGear(EquipmentSlot Slot, UEquipmentItem* Equipment)
 {
 	switch (Slot)
 	{
@@ -40,7 +41,7 @@ bool UEquipmentComponent::EquipGear(EquipmentSlot Slot, AEquipment* Equipment)
 	}
 }
 
-bool UEquipmentComponent::SetItemInSlot(AEquipment* EquipmentItem)
+bool UEquipmentComponent::SetItemInSlot(UEquipmentItem* EquipmentItem)
 {
 	switch(EquipmentItem->GetType())
 	{
@@ -83,6 +84,5 @@ void UEquipmentComponent::BeginPlay()
 void UEquipmentComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
 }
 

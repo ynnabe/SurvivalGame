@@ -17,7 +17,12 @@ class SURVIVALGAME_API USGInventoryComponent : public UActorComponent
 public:	
 	USGInventoryComponent();
 
+	void Initialize();
+
 	FOnInventoryChangedSignature OnInventoryChanged;
+
+	void SetCapacity(int32 NewColumns, int32 NewRows);
+	void SetItems(TArray<UInventoryItem*> NewItems);
 
 	bool TryAddItem(UInventoryItem* ItemToAdd);
 	bool IsRoomAvailable(UInventoryItem* Item, int32 TopLeftIndex);
@@ -31,6 +36,7 @@ public:
 	TMap<UInventoryItem*, FInventoryTile> GetItemsAsMap() const;
 	FORCEINLINE int32 GetColumns() const { return Columns; }
 	FORCEINLINE int32 GetRows() const { return Rows; }
+	FORCEINLINE TArray<UInventoryItem*> GetItems() const { return Items; }
 
 protected:
 	virtual void BeginPlay() override;

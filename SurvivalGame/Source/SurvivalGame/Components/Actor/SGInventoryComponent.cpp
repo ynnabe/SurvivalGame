@@ -12,6 +12,25 @@ USGInventoryComponent::USGInventoryComponent()
 
 }
 
+void USGInventoryComponent::Initialize()
+{
+	for(int Index = 0; Index <= Columns * Rows; Index++)
+	{
+		Items.Add(nullptr);
+	}
+}
+
+void USGInventoryComponent::SetCapacity(int32 NewColumns, int32 NewRows)
+{
+	Columns = NewColumns;
+	Rows = NewRows;
+}
+
+void USGInventoryComponent::SetItems(TArray<UInventoryItem*> NewItems)
+{
+	Items = NewItems;
+}
+
 bool USGInventoryComponent::TryAddItem(UInventoryItem* ItemToAdd)
 {
 	if(!IsValid(ItemToAdd))
@@ -108,6 +127,8 @@ void USGInventoryComponent::AddItem(UInventoryItem* ItemToAdd, int32 TopLeftInde
 			FInventoryTile OutTile(X, Y);
 			int32 IndexToInsert = TileToIndex(&OutTile);
 			Items[IndexToInsert] = ItemToAdd;
+			Items[IndexToInsert]->SetLastInventoryComponent(this);
+			Items[IndexToInsert]->SetLastIndex(TopLeftIndex);
 		}
 	}
 
@@ -160,9 +181,6 @@ void USGInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for(int Index = 0; Index <= Columns * Rows; Index++)
-	{
-		Items.Add(nullptr);
-	}
+	Initialize();
 }
 

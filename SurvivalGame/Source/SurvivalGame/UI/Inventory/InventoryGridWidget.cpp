@@ -42,17 +42,18 @@ bool UInventoryGridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDrag
 		FInventoryTile Tile(DraggedItemTopLeftTile.X, DraggedItemTopLeftTile.Y);
 		int32 Index = CachedInventoryComponent->TileToIndex(&Tile);
 		CachedInventoryComponent->AddItem(Payload, Index);
+		DrawDropLocation = false;
 		return true;
 	}
-	else
+	if(CachedInventoryComponent->TryAddItem(Payload))
 	{
-		if(CachedInventoryComponent->TryAddItem(Payload))
-		{
-			return true;
-		}
-
-		return false;
+		DrawDropLocation = false;
+		return true;
 	}
+
+	Payload->ReturnBack();
+	DrawDropLocation = false;
+	return true;
 }
 
 bool UInventoryGridWidget::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,

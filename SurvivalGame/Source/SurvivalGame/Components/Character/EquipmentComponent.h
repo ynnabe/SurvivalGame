@@ -23,28 +23,29 @@ class SURVIVALGAME_API UEquipmentComponent : public UActorComponent
 public:	
 	UEquipmentComponent();
 
-	bool EquipGear(EquipmentSlot Slot, AEquipment* Equipment);
+	bool EquipGear(EquipmentSlot Slot, UEquipmentItem* Equipment);
 
-	bool SetItemInSlot(AEquipment* EquipmentItem);
+	bool SetItemInSlot(UEquipmentItem* EquipmentItem);
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE AEquipment* GetTorsoSlot() const { return TorsoSlot; }
+	FORCEINLINE UEquipmentItem* GetTorsoSlot() const { return TorsoSlot; }
 	
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE AEquipment* GetBackpackSlot() const { return BackpackSlot; }
+	FORCEINLINE UEquipmentItem* GetBackpackSlot() const { return BackpackSlot; }
 
 protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Equipment slots")
-	AEquipment* TorsoSlot;
+	UEquipmentItem* TorsoSlot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Equipment slots")
-	AEquipment* BackpackSlot;
+	UEquipmentItem* BackpackSlot;
 
 private:
 
-	TWeakObjectPtr<ASGPlayerCharacter> CachedPlayer;
+	UPROPERTY()
+	ASGPlayerCharacter* CachedPlayer;
 
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

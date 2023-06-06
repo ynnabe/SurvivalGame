@@ -7,6 +7,7 @@
 #include "SurvivalGame/Components/Inventory/Data/InventoryTypes.h"
 #include "Equipment.generated.h"
 
+class UEquipmentItem;
 class USGInventoryComponent;
 /**
  * 
@@ -19,6 +20,8 @@ class SURVIVALGAME_API AEquipment : public AAEquipable
 public:
 
 	AEquipment();
+
+	virtual void InitializeItem() override;
 
 	virtual FText GetItemName() const override;
 
@@ -33,9 +36,16 @@ public:
 	
 protected:
 
+	virtual void BeginPlay() override;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Inventory Component")
 	USGInventoryComponent* InventoryComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Equipment parameters")
 	EEquipmentType Type;
+
+private:
+
+	UPROPERTY()
+	UEquipmentItem* EquipmentItem;
 };
