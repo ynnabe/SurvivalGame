@@ -21,6 +21,8 @@ class SURVIVALGAME_API UInventoryWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	
 	void SetTorsoEquipmentWidget(UEquipmentItem* InventoryComponent);
 	void SetBackpackEquipmentWidget(UEquipmentItem* InventoryComponent);
