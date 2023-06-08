@@ -54,7 +54,7 @@ bool UEquipmentComponent::SetItemInSlot(UEquipmentItem* EquipmentItem)
 				if(!IsValid(TorsoSlot))
 				{
 					TorsoSlot = EquipmentItem;
-					CachedPlayer->GetInventoryWidget()->SetTorsoEquipmentWidget(TorsoSlot->GetInventoryComponent());
+					CachedPlayer->GetInventoryWidget()->SetTorsoEquipmentWidget(TorsoSlot);
 					return true;
 				}
 				return false;
@@ -64,7 +64,7 @@ bool UEquipmentComponent::SetItemInSlot(UEquipmentItem* EquipmentItem)
 				if(!IsValid(BackpackSlot))
 				{
 					BackpackSlot = EquipmentItem;
-					CachedPlayer->GetInventoryWidget()->SetBackpackEquipmentWidget(BackpackSlot->GetInventoryComponent());
+					CachedPlayer->GetInventoryWidget()->SetBackpackEquipmentWidget(BackpackSlot);
 					return true;
 				}
 				return false;

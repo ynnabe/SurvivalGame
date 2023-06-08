@@ -7,22 +7,23 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
+#include "SurvivalGame/Inventory/InventoryItem.h"
+#include "SurvivalGame/Inventory/Equipment/EquipmentItem.h"
 
-void UInventoryWidget::SetTorsoEquipmentWidget(USGInventoryComponent* InventoryComponent)
+void UInventoryWidget::SetTorsoEquipmentWidget(UEquipmentItem* NewEquipment)
 {
 	FVector2d FinishSize;
-	TorsoEquipmentWidget->OnSetEquipment(InventoryComponent, FinishSize);
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("Finish size: X: %f Y: %f"), FinishSize.X, FinishSize.Y));
+	TorsoEquipmentWidget->OnSetEquipment(NewEquipment, FinishSize);
 
 	UCanvasPanelSlot* TorsoEquipmentWidgetAsCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(TorsoEquipmentWidget);
 	FVector2d CurrentSize = TorsoEquipmentWidgetAsCanvasSlot->GetSize();
 	TorsoEquipmentWidgetAsCanvasSlot->SetSize(FVector2d(CurrentSize.X, FinishSize.Y));
 }
 
-void UInventoryWidget::SetBackpackEquipmentWidget(USGInventoryComponent* InventoryComponent)
+void UInventoryWidget::SetBackpackEquipmentWidget(UEquipmentItem* NewEquipment)
 {
 	FVector2d FinishSize;
-	BackpackEquipmentWidget->OnSetEquipment(InventoryComponent, FinishSize);
+	BackpackEquipmentWidget->OnSetEquipment(NewEquipment, FinishSize);
 
 	UCanvasPanelSlot* BackpackEquipmentWidgetAsCanvasSlot = UWidgetLayoutLibrary::SlotAsCanvasSlot(BackpackEquipmentWidget);
 	FVector2d CurrentSize = BackpackEquipmentWidgetAsCanvasSlot->GetSize();

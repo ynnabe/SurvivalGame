@@ -26,9 +26,10 @@ public:
 
 	void ReturnBack();
 
+	FORCEINLINE FText GetItemName() const { return Name; }
+	FORCEINLINE UMaterialInterface* GetItemImage() const { return Image; }
 	FORCEINLINE FIntPoint GetItemDimensions() const;
-
-	UMaterialInterface* GetItemIcon() const { return bIsRotated ? ImageRotated : Image; }
+	FORCEINLINE UMaterialInterface* GetItemIcon() const { return bIsRotated ? ImageRotated : Image; }
 
 	void Rotate();
 

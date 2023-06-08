@@ -9,6 +9,7 @@
 class UCanvasPanel;
 class USGInventoryComponent;
 class UEquipmentWidget;
+class UEquipmentItem;
 class UInventoryGridWidget;
 class ASGPlayerCharacter;
 /**
@@ -21,8 +22,8 @@ class SURVIVALGAME_API UInventoryWidget : public UUserWidget
 
 public:
 	
-	void SetTorsoEquipmentWidget(USGInventoryComponent* InventoryComponent);
-	void SetBackpackEquipmentWidget(USGInventoryComponent* InventoryComponent);
+	void SetTorsoEquipmentWidget(UEquipmentItem* InventoryComponent);
+	void SetBackpackEquipmentWidget(UEquipmentItem* InventoryComponent);
 
 protected:
 
