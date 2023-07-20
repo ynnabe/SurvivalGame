@@ -37,6 +37,15 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	UFUNCTION(Server, Reliable)
+	void Server_DestroyInteractItem(AActor* ActorToDestroy);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_DestroyInteractItem(AActor* ActorToDestroy);
+
+	UFUNCTION(Client, Unreliable)
+	void Client_InteractLineTrace();
+
 	FORCEINLINE UInventoryWidget* GetInventoryWidget() const { return InventoryWidget; }
 	
 protected:

@@ -30,6 +30,16 @@ void AItem::SetDetect(bool NewValue)
 	bIsDetected = NewValue;
 }
 
+void AItem::Server_DestroyItem_Implementation()
+{
+	Multicast_DestroyItem();
+}
+
+void AItem::Multicast_DestroyItem_Implementation()
+{
+	Destroy();
+}
+
 void AItem::DetectedByTraceInteract_Implementation()
 {
 	if(!IsDetected())
@@ -50,7 +60,6 @@ void AItem::InteractPure(ASGBaseCharacter* Character)
 	InitializeItem();
 	if(Character->GetEquipmentComponent()->GetTorsoSlot()->GetInventoryComponent()->TryAddItem(Item))
 	{
-		Destroy();
 		return;
 	}
 	
@@ -58,7 +67,7 @@ void AItem::InteractPure(ASGBaseCharacter* Character)
 	
 	if(Character->GetEquipmentComponent()->GetBackpackSlot()->GetInventoryComponent()->TryAddItem(Item))
 	{
-		Destroy();
+		return;
 	}
 }
 

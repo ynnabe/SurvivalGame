@@ -25,6 +25,12 @@ public:
 
 	void SetDetect(bool NewValue);
 
+	UFUNCTION(Server, Reliable)
+	void Server_DestroyItem();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_DestroyItem();
+
 #pragma region InteractableInterface
 	void DetectedByTraceInteract_Implementation() override;
 	

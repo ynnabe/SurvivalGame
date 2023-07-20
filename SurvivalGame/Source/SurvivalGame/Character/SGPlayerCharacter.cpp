@@ -83,6 +83,10 @@ void ASGPlayerCharacter::Interact()
 		if(Interface)
 		{
 			Interface->InteractPure(this);
+			if(IsLocallyControlled() || HasAuthority())
+			{
+				Server_DestroyInteractItem(InteractableLineObject);
+			}
 		}
 	}
 }
@@ -116,13 +120,34 @@ void ASGPlayerCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	if(GetLocalRole() == ROLE_Authority)
+	{
+		Client_InteractLineTrace();
+	}
+}
+
+void ASGPlayerCharacter::Multicast_DestroyInteractItem_Implementation(AActor* ActorToDestroy)
+{
+	if(IsValid(ActorToDestroy))
+	{
+		ActorToDestroy->Destroy();
+	}
+}
+
+void ASGPlayerCharacter::Server_DestroyInteractItem_Implementation(AActor* ActorToDestroy)
+{
+	Multicast_DestroyInteractItem(ActorToDestroy);
+}
+
+void ASGPlayerCharacter::Client_InteractLineTrace_Implementation()
+{
 	FHitResult InteractableHitResult;
 	FVector ViewLocation;
 	FRotator ViewRotation;
 	GetController()->GetPlayerViewPoint(ViewLocation, ViewRotation);
 	FVector StartTrace = ViewRotation.Vector();
 	FVector EndTrace = ViewLocation + StartTrace * InteractTraceLength;
-	
+		
 	if(GetWorld()->LineTraceSingleByChannel(InteractableHitResult, ViewLocation, EndTrace, ECC_Visibility))
 	{
 		if(InteractableLineObject != InteractableHitResult.GetActor())
@@ -137,13 +162,20 @@ void ASGPlayerCharacter::Tick(float DeltaSeconds)
 				Interface->Execute_DetectedByTraceInteract(InteractableLineObject);
 				if(AItem* Item = Cast<AItem>(InteractableLineObject))
 				{
-					InteractableDetected.Execute(true, Item->GetItemName());
+					if(InteractableDetected.IsBound())
+					{
+						InteractableDetected.Execute(true, Item->GetItemName());
+					}
 				}
 			}
 			else
 			{
 				InteractableLineObject = nullptr;
-				InteractableDetected.Execute(false, FText());
+
+				if(InteractableDetected.IsBound())
+				{
+					InteractableDetected.Execute(false, FText());
+				}
 			}
 		}
 	}
@@ -155,7 +187,11 @@ void ASGPlayerCharacter::Tick(float DeltaSeconds)
 		}
 
 		InteractableLineObject = nullptr;
-		InteractableDetected.Execute(false, FText());
+
+		if(InteractableDetected.IsBound())
+		{
+			InteractableDetected.Execute(false, FText());
+		}
 	}
 }
 
