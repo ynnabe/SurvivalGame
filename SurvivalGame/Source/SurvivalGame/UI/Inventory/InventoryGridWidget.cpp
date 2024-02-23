@@ -11,6 +11,8 @@
 #include "Components/Border.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "SurvivalGame/Character/SGPlayerCharacter.h"
+#include "SurvivalGame/Character/Controller/SGPlayerController.h"
 #include "SurvivalGame/Components/Actor/SGInventoryComponent.h"
 #include "SurvivalGame/Inventory/InventoryItem.h"
 
@@ -26,6 +28,9 @@ void UInventoryGridWidget::InitializeGrid(USGInventoryComponent* InventoryCompon
 	Refresh();
 
 	CachedInventoryComponent->OnInventoryChanged.BindUObject(this, &UInventoryGridWidget::Refresh);
+
+	Player = Cast<ASGPlayerCharacter>(GetOwningPlayerPawn());
+	PlayerController = Cast<ASGPlayerController>(Player->GetController());
 }
 
 void UInventoryGridWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -129,6 +134,19 @@ FReply UInventoryGridWidget::NativeOnPreviewKeyDown(const FGeometry& InGeometry,
 	return FReply::Handled();
 }
 
+FReply UInventoryGridWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	if(InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
+	{
+		PlayerController->ClearWidgets();
+		FEventReply Reply;
+		return Reply.NativeReply;
+	}
+
+	FEventReply Reply;
+	return Reply.NativeReply;
+}
+
 int32 UInventoryGridWidget::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
                                         const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId,
                                         const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
@@ -198,9 +216,10 @@ UInventoryItem* UInventoryGridWidget::GetPayload(UDragDropOperation* DragDropOpe
 	return Payload;
 }
 
-void UInventoryGridWidget::OnItemRemoved(UInventoryItem* ItemToRemove)
+void UInventoryGridWidget::OnItemRemoved(UInventoryItem* ItemToRemove, bool bNeedToDrop)
 {
-	CachedInventoryComponent->RemoveItem(ItemToRemove);
+	CachedInventoryComponent->RemoveItem(ItemToRemove, bNeedToDrop);
+	Refresh();
 }
 
 void UInventoryGridWidget::CreateLineSegments()
@@ -235,7 +254,7 @@ void UInventoryGridWidget::Refresh()
 		UItemWidget* CurrentItemWidget = CreateWidget<UItemWidget>(GetOwningPlayer(), ItemWidgetClass);
 		CurrentItemWidget->SetItem(ItemMap.Key);
 		CurrentItemWidget->SetTileSize(TileSize);
-		CurrentItemWidget->OnRemoved.BindUObject(this, &UInventoryGridWidget::OnItemRemoved);
+		CurrentItemWidget->OnRemoved.AddUObject(this, &UInventoryGridWidget::OnItemRemoved);
 		UCanvasPanelSlot* ItemWidgetAsCanvasSlot = Cast<UCanvasPanelSlot>(GridCanvasPanel->AddChild(CurrentItemWidget));
 		ItemWidgetAsCanvasSlot->SetAutoSize(true);
 		FVector2d NewPosition = FVector2d(ItemMap.Value.X * TileSize - 5.0f, ItemMap.Value.Y * TileSize - 4.0f);

@@ -8,6 +8,7 @@
 #include "SurvivalGame/UI/SGPlayerWidget.h"
 #include "SGBaseCharacter.generated.h"
 
+class UInventoryItem;
 class ASGPlayerController;
 class UEquipmentComponent;
 class USGCharacterAttributes;
@@ -33,6 +34,8 @@ public:
 	virtual void StartSprint();
 	virtual void StopSprint();
 
+	virtual bool TryAddItem(UInventoryItem* Item) { return true; };
+
 	UFUNCTION(Server, Unreliable)
 	void Server_ToggleJump(bool NewState);
 
@@ -49,6 +52,8 @@ public:
 	FORCEINLINE UEquipmentComponent* GetEquipmentComponent() const { return SGEquipmentComponent; }
 
 	FORCEINLINE ASGPlayerController* GetPlayerController() const { return PlayerController; }
+
+	void SpawnDropedItem(UInventoryItem* ItemToSpawn);
 	
 	UPROPERTY(Replicated)
 	bool bIsJumping = false;

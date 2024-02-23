@@ -30,6 +30,7 @@ public:
 
 	virtual void DetectedByTraceInteract_Implementation() override;
 
+
 #pragma region InteractableInterface
 	virtual void InteractPure(ASGBaseCharacter* Character) override;
 #pragma endregion

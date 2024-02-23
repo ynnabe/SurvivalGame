@@ -6,12 +6,13 @@
 #include "SurvivalGame/Components/Actor/SGInventoryComponent.h"
 
 void UInventoryItem::Initialize(FText NameIn, UMaterialInterface* ImageIn, UMaterialInterface* ImageRotatedIn,
-                                FIntPoint ItemDimensionsIn)
+                                FIntPoint ItemDimensionsIn, TSubclassOf<AItem> ItemActorClass_In)
 {
 	Name = NameIn;
 	Image = ImageIn;
 	ImageRotated = ImageRotatedIn;
 	ItemDimensions = ItemDimensionsIn;
+	SetItemActorClass(ItemActorClass_In);
 }
 
 void UInventoryItem::Initialize(FText NameIn, UMaterialInterface* ImageIn, UMaterialInterface* ImageRotatedIn,
@@ -39,4 +40,9 @@ FIntPoint UInventoryItem::GetItemDimensions() const
 void UInventoryItem::Rotate()
 {
 	bIsRotated = !bIsRotated;
+}
+
+void UInventoryItem::SetItemActorClass(TSubclassOf<AItem> ItemActorClass_In)
+{
+	ItemActorClass = ItemActorClass_In;
 }

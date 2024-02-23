@@ -10,6 +10,7 @@
 #include "SurvivalGame/UI/InteractableWidget.h"
 #include "SurvivalGame/UI/SGCharacterAttributesWidget.h"
 #include "SurvivalGame/UI/SGPlayerWidget.h"
+#include "SurvivalGame/UI/Inventory/ContextItem/ItemContextWidget.h"
 
 void ASGPlayerController::SetPawn(APawn* InPawn)
 {
@@ -68,6 +69,23 @@ void ASGPlayerController::SetupInputComponent()
 		{
 			PlayerEnhancedInputComponent->BindAction(Inventory, ETriggerEvent::Started, this, &ASGPlayerController::UseInventory);
 		}
+	}
+}
+
+void ASGPlayerController::SetItemContextWidget(UItemContextWidget* Widget)
+{
+	if(IsValid(ItemContextWidget))
+	{
+		ItemContextWidget->RemoveFromParent();
+	}
+	ItemContextWidget = Widget;
+}
+
+void ASGPlayerController::ClearWidgets()
+{
+	if(IsValid(ItemContextWidget))
+	{
+		ItemContextWidget->RemoveFromParent();
 	}
 }
 

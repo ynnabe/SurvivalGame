@@ -6,6 +6,11 @@
 #include "Blueprint/UserWidget.h"
 #include "ItemWidget.generated.h"
 
+class ASGPlayerController;
+class ASGPlayerCharacter;
+class UInventoryGridWidget;
+class UInventoryWidget;
+class UItemContextWidget;
 class UInventoryItem;
 class USlateBrushAsset;
 class USizeBox;
@@ -13,7 +18,7 @@ class UBorder;
 class UImage;
 class AItem;
 
-DECLARE_DELEGATE_OneParam(FOnRemovedSignature, UInventoryItem* Item);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRemovedSignature, UInventoryItem* Item, bool bNeedToDrop);
 /**
  * 
  */
@@ -41,7 +46,15 @@ public:
 	void SetItem(UInventoryItem* ItemIn);
 	void SetTileSize(float TileSizeIn);
 
+	UInventoryGridWidget* GetOwnerGridWidget() const { return OwnerGridWidget; }
+	void SetOwnerGridWidget(UInventoryGridWidget* OwnerGrid);
+
+	void RemoveItem();
+
 protected:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Context")
+	TSubclassOf<UItemContextWidget> ItemContextClass;
 
 	UPROPERTY(meta=(BindWidget))
 	USizeBox* BackgroundSizeBox;
@@ -62,6 +75,15 @@ protected:
 	float RefreshDelay = 0.5f;
 
 private:
+
+	UPROPERTY()
+	UInventoryGridWidget* OwnerGridWidget;
+
+	UPROPERTY()
+	ASGPlayerCharacter* Player;
+
+	UPROPERTY()
+	ASGPlayerController* PlayerController;
 
 	UPROPERTY()
 	UInventoryItem* Item;

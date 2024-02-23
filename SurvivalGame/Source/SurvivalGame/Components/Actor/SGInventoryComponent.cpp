@@ -5,11 +5,14 @@
 #include "SurvivalGame/Components/Inventory/Data/InventoryTypes.h"
 #include "SurvivalGame/Inventory/InventoryItem.h"
 #include "Kismet/KismetArrayLibrary.h"
+#include "SurvivalGame/Character/SGBaseCharacter.h"
+#include "SurvivalGame/Inventory/Equipment/EquipmentItem.h"
 
 USGInventoryComponent::USGInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
+	
 }
 
 void USGInventoryComponent::Initialize()
@@ -140,10 +143,14 @@ void USGInventoryComponent::AddItem(UInventoryItem* ItemToAdd, int32 TopLeftInde
 	bIsDirty = true;
 }
 
-void USGInventoryComponent::RemoveItem(UInventoryItem* ItemToRemove)
+void USGInventoryComponent::RemoveItem(UInventoryItem* ItemToRemove, bool bNeedToDrop)
 {
 	if(IsValid(ItemToRemove))
 	{
+		if(bNeedToDrop)
+		{
+			DropItem(ItemToRemove);
+		}
 		for (auto &Item : Items)
 		{
 			if(IsValid(Item))
@@ -155,6 +162,11 @@ void USGInventoryComponent::RemoveItem(UInventoryItem* ItemToRemove)
 			}
 		}
 	}
+}
+
+void USGInventoryComponent::DropItem(UInventoryItem* ItemToDrop)
+{
+	PlayerOwner->SpawnDropedItem(ItemToDrop);
 }
 
 TMap<UInventoryItem*, FInventoryTile> USGInventoryComponent::GetItemsAsMap() const
@@ -175,6 +187,11 @@ TMap<UInventoryItem*, FInventoryTile> USGInventoryComponent::GetItemsAsMap() con
 	}
 	
 	return AllItems;
+}
+
+void USGInventoryComponent::SetPlayerOwner(ASGBaseCharacter* Player)
+{
+	PlayerOwner = Player;
 }
 
 void USGInventoryComponent::BeginPlay()

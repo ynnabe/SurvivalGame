@@ -3,6 +3,7 @@
 
 #include "EquipmentItem.h"
 
+#include "SurvivalGame/Character/SGBaseCharacter.h"
 #include "SurvivalGame/Components/Actor/SGInventoryComponent.h"
 
 UEquipmentItem::UEquipmentItem()
@@ -18,6 +19,12 @@ void UEquipmentItem::Initialize(FText NameIn, UMaterialInterface* ImageIn, UMate
 	ImageRotated = ImageRotatedIn;
 	ItemDimensions = ItemDimensionsIn;
 	Type = TypeIn;
+	//InventoryComponent = InventoryComponentIn;
 	InventoryComponent->SetCapacity(InventoryComponentIn->GetColumns(), InventoryComponentIn->GetRows());
 	InventoryComponent->SetItems(InventoryComponentIn->GetItems());
+}
+
+void UEquipmentItem::SetPlayerOwner(ASGBaseCharacter* Player)
+{
+	CachedOwner = Player;
 }

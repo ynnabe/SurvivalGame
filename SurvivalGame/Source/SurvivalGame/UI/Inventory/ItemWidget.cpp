@@ -3,6 +3,7 @@
 
 #include "ItemWidget.h"
 
+#include "InventoryGridWidget.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Runtime/UMG/Public/UMG.h"
 #include "Runtime/UMG/Public/UMGStyle.h"
@@ -13,7 +14,10 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Image.h"
 #include "Components/SizeBox.h"
+#include "ContextItem/ItemContextWidget.h"
 #include "SurvivalGame/Actors/Items/Item.h"
+#include "SurvivalGame/Character/SGPlayerCharacter.h"
+#include "SurvivalGame/Character/Controller/SGPlayerController.h"
 #include "SurvivalGame/Inventory/InventoryItem.h"
 
 void UItemWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -32,6 +36,24 @@ void UItemWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 
 FReply UItemWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
+	if(InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton))
+	{
+		UItemContextWidget* ContextWidget = CreateWidget<UItemContextWidget>(GetOwningPlayer(), ItemContextClass);
+		ContextWidget->AddToViewport();
+		ContextWidget->SetItem(Item, this);
+		PlayerController->SetItemContextWidget(ContextWidget);
+		float MousePositionX;
+		float MousePositionY;
+		PlayerController->GetMousePosition(MousePositionX, MousePositionY);
+		FVector2d MousePosition2D = FVector2d(MousePositionX, MousePositionY);
+		ContextWidget->SetPositionInViewport(MousePosition2D);
+		
+		FEventReply Reply;
+		return Reply.NativeReply;
+	}
+	
+	PlayerController->ClearWidgets();
+	
 	FEventReply Reply = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton);
 	return Reply.NativeReply;
 }
@@ -46,7 +68,7 @@ void UItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 	DragDropOperation->Payload = Item;
 	DragDropOperation->DefaultDragVisual = this;
 
-	OnRemoved.Execute(Item);
+	OnRemoved.Broadcast(Item, false);
 
 	RemoveFromParent();
 
@@ -61,6 +83,9 @@ void UItemWidget::NativeOnInitialized()
 	{
 		Refresh();
 	}, 0.001f, false);
+
+	Player = Cast<ASGPlayerCharacter>(GetOwningPlayerPawn());
+	PlayerController = Cast<ASGPlayerController>(Player->GetController());
 }
 
 void UItemWidget::Refresh()
@@ -95,4 +120,14 @@ void UItemWidget::SetItem(UInventoryItem* ItemIn)
 void UItemWidget::SetTileSize(float TileSizeIn)
 {
 	TileSize = TileSizeIn;
+}
+
+void UItemWidget::SetOwnerGridWidget(UInventoryGridWidget* OwnerGrid)
+{
+	OwnerGridWidget = OwnerGrid;
+}
+
+void UItemWidget::RemoveItem()
+{
+	OnRemoved.Broadcast(Item, true);
 }

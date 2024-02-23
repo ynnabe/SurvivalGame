@@ -24,6 +24,9 @@ public:
 	
 	FORCEINLINE USGInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
 	FORCEINLINE EEquipmentType GetType() const { return Type; }
+	FORCEINLINE ASGBaseCharacter* GetPlayerOwner() const { return CachedOwner.Get(); }
+
+	void SetPlayerOwner(ASGBaseCharacter* Player);
 
 protected:
 
@@ -32,5 +35,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Equipment parameters")
 	EEquipmentType Type;
+
+private:
+
+	TWeakObjectPtr<ASGBaseCharacter> CachedOwner;
 	
 };

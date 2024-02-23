@@ -35,6 +35,8 @@ public:
 
 	virtual void UseInventory() override;
 
+	virtual bool TryAddItem(UInventoryItem* Item) override;
+
 	virtual void Tick(float DeltaSeconds) override;
 
 	UFUNCTION(Server, Reliable)

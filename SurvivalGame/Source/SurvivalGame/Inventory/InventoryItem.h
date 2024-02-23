@@ -18,7 +18,8 @@ class SURVIVALGAME_API UInventoryItem : public UObject
 	
 public:
 
-	virtual void Initialize(FText NameIn, UMaterialInterface* ImageIn, UMaterialInterface* ImageRotatedIn, FIntPoint ItemDimensionsIn);
+	virtual void Initialize(FText NameIn, UMaterialInterface* ImageIn, UMaterialInterface* ImageRotatedIn, FIntPoint ItemDimensionsIn, TSubclassOf<
+	                        AItem> ItemActorClass_In);
 	virtual void Initialize(FText NameIn, UMaterialInterface* ImageIn, UMaterialInterface* ImageRotatedIn, FIntPoint ItemDimensionsIn, USGInventoryComponent* InventoryComponentIn, EEquipmentType TypeIn);
 	
 	void SetLastInventoryComponent(USGInventoryComponent* InventoryComponent) { LastInventoryComponent = InventoryComponent; }
@@ -30,6 +31,7 @@ public:
 	FORCEINLINE UMaterialInterface* GetItemImage() const { return Image; }
 	FORCEINLINE FIntPoint GetItemDimensions() const;
 	FORCEINLINE UMaterialInterface* GetItemIcon() const { return bIsRotated ? ImageRotated : Image; }
+	FORCEINLINE TSubclassOf<AItem> GetItemActorClass() const { return ItemActorClass; }
 
 	void Rotate();
 
@@ -52,8 +54,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Item parameters")
 	FIntPoint ItemDimensions = FIntPoint();
 
+
 private:
 
+	void SetItemActorClass(TSubclassOf<AItem> ItemActorClass_In);
+	
+	TSubclassOf<AItem> ItemActorClass;
+	
 	UPROPERTY()
 	USGInventoryComponent* LastInventoryComponent;
 	int32 LastIndex;

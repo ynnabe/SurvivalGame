@@ -2,12 +2,13 @@
 
 
 #include "SGBaseCharacter.h"
-
 #include "Controller/SGPlayerController.h"
 #include "Net/UnrealNetwork.h"
+#include "SurvivalGame/Actors/Items/Item.h"
 #include "SurvivalGame/Components/Character/EquipmentComponent.h"
 #include "SurvivalGame/Components/Character/SGCharacterAttributes.h"
 #include "SurvivalGame/Components/Character/SGCharacterMovementComponent.h"
+#include "SurvivalGame/Inventory/InventoryItem.h"
 
 
 ASGBaseCharacter::ASGBaseCharacter(const FObjectInitializer& ObjectInitializer)
@@ -95,6 +96,14 @@ void ASGBaseCharacter::Server_StartAttributesSprint_Implementation()
 void ASGBaseCharacter::Server_StopAttributesSprint_Implementation()
 {
 	SGCharacterAttributes->bIsSprinting = false;
+}
+
+void ASGBaseCharacter::SpawnDropedItem(UInventoryItem* ItemToSpawn)
+{
+	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 100.0f;
+	FRotator SpawnRotation = GetActorRotation();
+	FActorSpawnParameters ActorSpawnParameters;
+	GetWorld()->SpawnActor<AItem>(ItemToSpawn->GetItemActorClass(), SpawnLocation, SpawnRotation, ActorSpawnParameters);
 }
 
 void ASGBaseCharacter::BeginPlay()

@@ -7,6 +7,7 @@
 #include "SurvivalGame/Components/Inventory/Data/InventoryTypes.h"
 #include "SGInventoryComponent.generated.h"
 
+class UEquipmentItem;
 DECLARE_DELEGATE(FOnInventoryChangedSignature);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -31,12 +32,15 @@ public:
 	int32 TileToIndex(FInventoryTile* Tile);
 
 	void AddItem(UInventoryItem* ItemToAdd, int32 TopLeftIndex);
-	void RemoveItem(UInventoryItem* ItemToRemove);
+	void RemoveItem(UInventoryItem* ItemToRemove, bool bNeedToDrop);
+	void DropItem(UInventoryItem* ItemToDrop);
 
 	TMap<UInventoryItem*, FInventoryTile> GetItemsAsMap() const;
 	FORCEINLINE int32 GetColumns() const { return Columns; }
 	FORCEINLINE int32 GetRows() const { return Rows; }
 	FORCEINLINE TArray<UInventoryItem*> GetItems() const { return Items; }
+
+	void SetPlayerOwner(ASGBaseCharacter* Player);
 
 protected:
 	virtual void BeginPlay() override;
@@ -53,7 +57,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Inventory")
 	TSubclassOf<AItem> ItemBaseClass;
 
-private:	
+private:
+
+	TWeakObjectPtr<UEquipmentItem> EquipmentOwner;
+	TWeakObjectPtr<ASGBaseCharacter> PlayerOwner;
 
 	bool bIsDirty = false;
 

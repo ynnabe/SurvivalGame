@@ -40,6 +40,7 @@ void AEquipment::InteractPure(ASGBaseCharacter* Character)
 	InitializeItem();
 	if(CharacterEquipmentComponent->SetItemInSlot(EquipmentItem))
 	{
+		EquipmentItem->GetInventoryComponent()->SetPlayerOwner(Character);
 		Destroy();
 	}
 	else

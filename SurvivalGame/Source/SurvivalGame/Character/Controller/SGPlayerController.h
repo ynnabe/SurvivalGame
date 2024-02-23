@@ -7,6 +7,7 @@
 #include "SurvivalGame/Character/SGBaseCharacter.h"
 #include "SGPlayerController.generated.h"
 
+class UItemContextWidget;
 class USGPlayerWidget;
 class UInputAction;
 class UInputMappingContext;
@@ -31,6 +32,10 @@ public:
 
 	UFUNCTION(Client, Reliable)
 	void Client_ToggleInventoryMapping(bool State);
+
+	void SetItemContextWidget(UItemContextWidget* Widget);
+
+	void ClearWidgets();
 
 protected:
 
@@ -79,6 +84,9 @@ private:
 
 	UPROPERTY()
 	USGPlayerWidget* PlayerHUDWidget = nullptr;
+
+	UPROPERTY()
+	UItemContextWidget* ItemContextWidget;
 
 	TWeakObjectPtr<ASGBaseCharacter> CachedBaseCharacter;
 	

@@ -20,7 +20,7 @@ void AItem::InitializeItem()
 {
 	UInventoryItem* ItemNew = NewObject<UInventoryItem>();
 	
-	ItemNew->Initialize(Name, Image, ImageRotated, ItemDimensions);
+	ItemNew->Initialize(Name, Image, ImageRotated, ItemDimensions, GetClass());
 	
 	Item = ItemNew;
 }
@@ -58,17 +58,7 @@ void AItem::DetectedByTraceInteract_Implementation()
 void AItem::InteractPure(ASGBaseCharacter* Character)
 {
 	InitializeItem();
-	if(Character->GetEquipmentComponent()->GetTorsoSlot()->GetInventoryComponent()->TryAddItem(Item))
-	{
-		return;
-	}
-	
-	Item->Rotate();
-	
-	if(Character->GetEquipmentComponent()->GetBackpackSlot()->GetInventoryComponent()->TryAddItem(Item))
-	{
-		return;
-	}
+	Character->TryAddItem(Item);
 }
 
 void AItem::BeginPlay()

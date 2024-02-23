@@ -9,6 +9,8 @@
 #include "Runtime\Engine\Classes\Slate\SlateBrushAsset.h"
 #include "InventoryGridWidget.generated.h"
 
+class ASGPlayerController;
+class ASGPlayerCharacter;
 class UItemWidget;
 class UEquipmentWidget;
 class UBorder;
@@ -33,8 +35,11 @@ public:
 	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	virtual FReply NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
+
+	UCanvasPanel* GetGridCanvasPanel() const { return GridCanvasPanel; }
 
 
 protected:
@@ -72,7 +77,7 @@ private:
 	UInventoryItem* GetPayload(UDragDropOperation* DragDropOperation) const;
 
 	UFUNCTION()
-	void OnItemRemoved(UInventoryItem* ItemToRemove);
+	void OnItemRemoved(UInventoryItem* ItemToRemove, bool bNeedToDrop);
 	
 	void CreateLineSegments();
 
@@ -82,4 +87,10 @@ private:
 
 	UPROPERTY()
 	USGInventoryComponent* CachedInventoryComponent;
+
+	UPROPERTY()
+	ASGPlayerCharacter* Player;
+
+	UPROPERTY()
+	ASGPlayerController* PlayerController;
 };

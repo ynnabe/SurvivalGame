@@ -2,25 +2,30 @@
 
 
 #include "SGPlayerCharacter.h"
-
 #include "Camera/CameraComponent.h"
 #include "Controller/SGPlayerController.h"
+#include "GameFramework/PlayerState.h"
 #include "SurvivalGame/Actors/Items/Item.h"
+#include "SurvivalGame/Components/Character/EquipmentComponent.h"
 #include "SurvivalGame/Components/Character/SGCharacterMovementComponent.h"
 #include "SurvivalGame/Interfaces/SGInteractableInterface.h"
+#include "SurvivalGame/Inventory/InventoryItem.h"
 #include "SurvivalGame/UI/Inventory/InventoryWidget.h"
+#include "SurvivalGame/Inventory/Equipment/EquipmentItem.h"
+#include "SurvivalGame/Components/Actor/SGInventoryComponent.h"
 
 ASGPlayerCharacter::ASGPlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<USGCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
-	CameraComponent->SetupAttachment(GetMesh());
+	CameraComponent->SetupAttachment(GetMesh(), FName("head"));
 	CameraComponent->bUsePawnControlRotation = true;
 
 	FPSkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FPSkeletalMeshComponent"));
 	FPSkeletalMeshComponent->SetupAttachment(RootComponent);
 	FPSkeletalMeshComponent->SetOnlyOwnerSee(true);
 	GetMesh()->SetCastHiddenShadow(true);
+	
 }
 
 void ASGPlayerCharacter::CreateInventoryWidget()
@@ -83,10 +88,6 @@ void ASGPlayerCharacter::Interact()
 		if(Interface)
 		{
 			Interface->InteractPure(this);
-			if(IsLocallyControlled() || HasAuthority())
-			{
-				Server_DestroyInteractItem(InteractableLineObject);
-			}
 		}
 	}
 }
@@ -105,6 +106,7 @@ void ASGPlayerCharacter::UseInventory()
 	{
 		InventoryWidget->RemoveFromParent();
 		GetPlayerController()->Client_ToggleInventoryMapping(false);
+		GetPlayerController()->ClearWidgets();
 		GetPlayerController()->GetPlayerWidget()->AddToViewport();
 	}
 	else
@@ -114,6 +116,49 @@ void ASGPlayerCharacter::UseInventory()
 		GetPlayerController()->GetPlayerWidget()->RemoveFromParent();
 	}
 
+}
+
+bool ASGPlayerCharacter::TryAddItem(UInventoryItem* Item)
+{
+	UEquipmentItem* TorsoSlot = GetEquipmentComponent()->GetTorsoSlot();
+	if(IsValid(TorsoSlot))
+	{
+		if(TorsoSlot->GetInventoryComponent()->TryAddItem(Item))
+		{
+			if(IsLocallyControlled() || HasAuthority())
+			{
+				Server_DestroyInteractItem(InteractableLineObject);
+			}
+			return true;
+		}
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString::Printf(TEXT("TorsoSlot is invalid")));
+		return false;
+	}
+
+	Item->Rotate();
+
+	UEquipmentItem* BackpackSlot = GetEquipmentComponent()->GetBackpackSlot();
+	if(IsValid(BackpackSlot))
+	{
+		if(BackpackSlot->GetInventoryComponent()->TryAddItem(Item))
+		{
+			if(IsLocallyControlled() || HasAuthority())
+			{
+				Server_DestroyInteractItem(InteractableLineObject);
+			}
+			return true;
+		}
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("BackpackSlot is invalid")));
+		return false;
+	}
+
+	return false;
 }
 
 void ASGPlayerCharacter::Tick(float DeltaSeconds)
