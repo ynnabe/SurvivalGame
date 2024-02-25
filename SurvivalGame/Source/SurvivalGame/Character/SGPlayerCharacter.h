@@ -63,6 +63,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="InventoryWidgetClass")
 	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Parameters")
+	USoundBase* PickUpSound;
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void OnStartSprint();
@@ -74,6 +77,9 @@ private:
 
 	UPROPERTY()
 	UInventoryWidget* InventoryWidget;
+
+	UPROPERTY()
+	USGCharacterAnimInstance* FPPlayerAnimInstance;
 
 	UPROPERTY()
 	bool bIsInventoryVisible = false;

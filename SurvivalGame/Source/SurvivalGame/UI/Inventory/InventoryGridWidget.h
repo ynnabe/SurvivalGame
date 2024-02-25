@@ -59,6 +59,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	USlateBrushAsset* SlateBrush;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	USoundBase* DropSound;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="DragNDrop parameters")
 	FLinearColor AvailableColor;
 

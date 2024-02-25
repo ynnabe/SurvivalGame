@@ -65,6 +65,9 @@ protected:
 	UPROPERTY(meta=(BindWidget))
 	UImage* ItemIcon;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	USoundBase* DragSound;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Hover parameters")
 	FLinearColor HoverColor;
 

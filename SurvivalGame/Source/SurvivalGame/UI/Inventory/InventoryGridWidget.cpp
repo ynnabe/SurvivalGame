@@ -47,6 +47,7 @@ bool UInventoryGridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDrag
 		FInventoryTile Tile(DraggedItemTopLeftTile.X, DraggedItemTopLeftTile.Y);
 		int32 Index = CachedInventoryComponent->TileToIndex(&Tile);
 		CachedInventoryComponent->AddItem(Payload, Index);
+		PlaySound(DropSound);
 		DrawDropLocation = false;
 		return true;
 	}

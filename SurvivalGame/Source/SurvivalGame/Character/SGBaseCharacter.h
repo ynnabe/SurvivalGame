@@ -8,6 +8,7 @@
 #include "SurvivalGame/UI/SGPlayerWidget.h"
 #include "SGBaseCharacter.generated.h"
 
+class USGCharacterAnimInstance;
 class UInventoryItem;
 class ASGPlayerController;
 class UEquipmentComponent;
@@ -88,6 +89,9 @@ private:
 
 	UPROPERTY()
 	USGPlayerWidget* PlayerHUDWidget = nullptr;
+
+	UPROPERTY()
+	USGCharacterAnimInstance* PlayerAnimInstance;
 
 	UPROPERTY()
 	ASGPlayerController* PlayerController;

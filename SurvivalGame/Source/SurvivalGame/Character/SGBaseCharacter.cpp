@@ -2,6 +2,8 @@
 
 
 #include "SGBaseCharacter.h"
+
+#include "Animation/SGCharacterAnimInstance.h"
 #include "Controller/SGPlayerController.h"
 #include "Net/UnrealNetwork.h"
 #include "SurvivalGame/Actors/Items/Item.h"
@@ -68,6 +70,7 @@ void ASGBaseCharacter::Interact()
 void ASGBaseCharacter::StartSprint()
 {
 	SGCharacterMovementComponent->SetIsSprinting(true);
+	PlayerAnimInstance->SetSprinting(true);
 	if(IsLocallyControlled())
 	{
 		Server_StartAttributesSprint();
@@ -77,6 +80,7 @@ void ASGBaseCharacter::StartSprint()
 void ASGBaseCharacter::StopSprint()
 {
 	SGCharacterMovementComponent->SetIsSprinting(false);
+	PlayerAnimInstance->SetSprinting(false);
 	if(IsLocallyControlled())
 	{
 		Server_StopAttributesSprint();
@@ -111,6 +115,7 @@ void ASGBaseCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	PlayerController = Cast<ASGPlayerController>(GetController());
+	PlayerAnimInstance = Cast<USGCharacterAnimInstance>(GetMesh()->GetAnimInstance());
 }
 
 

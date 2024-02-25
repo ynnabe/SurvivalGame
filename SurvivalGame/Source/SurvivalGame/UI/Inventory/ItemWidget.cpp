@@ -73,6 +73,7 @@ void UItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPoint
 	RemoveFromParent();
 
 	OutOperation = DragDropOperation;
+	PlaySound(DragSound);
 }
 
 void UItemWidget::NativeOnInitialized()

@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "EquipmentComponent.generated.h"
 
+class UEquipmentItem;
 class ASGPlayerCharacter;
 
 enum EquipmentSlot

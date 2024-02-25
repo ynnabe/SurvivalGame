@@ -2,9 +2,12 @@
 
 
 #include "SGPlayerCharacter.h"
+
+#include "Animation/SGCharacterAnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Controller/SGPlayerController.h"
 #include "GameFramework/PlayerState.h"
+#include "Kismet/GameplayStatics.h"
 #include "SurvivalGame/Actors/Items/Item.h"
 #include "SurvivalGame/Components/Character/EquipmentComponent.h"
 #include "SurvivalGame/Components/Character/SGCharacterMovementComponent.h"
@@ -38,6 +41,8 @@ void ASGPlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	CreateInventoryWidget();
+
+	FPPlayerAnimInstance = Cast<USGCharacterAnimInstance>(FPSkeletalMeshComponent->GetAnimInstance());
 }
 
 void ASGPlayerCharacter::Move(const FInputActionValue& Value)
@@ -69,12 +74,14 @@ void ASGPlayerCharacter::Look(const FInputActionValue& Value)
 void ASGPlayerCharacter::StartSprint()
 {
 	Super::StartSprint();
+	FPPlayerAnimInstance->SetSprinting(true);
 	OnStartSprint();
 }
 
 void ASGPlayerCharacter::StopSprint()
 {
 	Super::StopSprint();
+	FPPlayerAnimInstance->SetSprinting(false);
 	OnStopSprint();
 }
 
@@ -125,6 +132,7 @@ bool ASGPlayerCharacter::TryAddItem(UInventoryItem* Item)
 	{
 		if(TorsoSlot->GetInventoryComponent()->TryAddItem(Item))
 		{
+			UGameplayStatics::PlaySound2D(GetWorld(), PickUpSound);
 			if(IsLocallyControlled() || HasAuthority())
 			{
 				Server_DestroyInteractItem(InteractableLineObject);
@@ -145,6 +153,7 @@ bool ASGPlayerCharacter::TryAddItem(UInventoryItem* Item)
 	{
 		if(BackpackSlot->GetInventoryComponent()->TryAddItem(Item))
 		{
+			UGameplayStatics::PlaySound2D(GetWorld(), PickUpSound);
 			if(IsLocallyControlled() || HasAuthority())
 			{
 				Server_DestroyInteractItem(InteractableLineObject);

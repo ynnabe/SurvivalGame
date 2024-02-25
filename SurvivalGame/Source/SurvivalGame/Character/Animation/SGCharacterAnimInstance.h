@@ -23,6 +23,8 @@ public:
 
 	void ToggleFalling(bool NewState) { bIsJumping = NewState; }
 
+	void SetSprinting(bool NewState) { bIsSprinting = NewState; }
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Parameters")
@@ -33,6 +35,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Parameters")
 	bool bIsJumping;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Parameters")
+	bool bIsSprinting;
 
 private:
 
