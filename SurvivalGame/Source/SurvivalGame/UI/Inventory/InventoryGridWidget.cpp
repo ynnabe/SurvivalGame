@@ -5,6 +5,7 @@
 
 #include "EquipmentWidget.h"
 #include "ItemWidget.h"
+#include "USGLinesDrawer.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
@@ -24,7 +25,9 @@ void UInventoryGridWidget::InitializeGrid(USGInventoryComponent* InventoryCompon
 	FinishSize = NewSize;
 	GridBorderAsCanvasSlot->SetSize(NewSize);
 
-	CreateLineSegments();
+	LinesDrawer->SetInventoryGridWidget(this);
+	LinesDrawer->CreateLineSegments(CachedInventoryComponent->GetColumns(), CachedInventoryComponent->GetRows(), TileSize);
+	//CreateLineSegments();
 	Refresh();
 
 	CachedInventoryComponent->OnInventoryChanged.BindUObject(this, &UInventoryGridWidget::Refresh);
@@ -148,41 +151,6 @@ FReply UInventoryGridWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry
 	return Reply.NativeReply;
 }
 
-int32 UInventoryGridWidget::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
-                                        const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId,
-                                        const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
-{
-	for (auto Line : Lines)
-	{
-		FVector2d LocalTopLeft = USlateBlueprintLibrary::GetLocalTopLeft(GridBorder->GetCachedGeometry());
-		FVector2d PositionA = Line.StartPoint + LocalTopLeft;
-		FVector2d PositionB = Line.EndPoint + LocalTopLeft;
-		FPaintContext PaintContext = FPaintContext(AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
-		UWidgetBlueprintLibrary::DrawLine(PaintContext, PositionA, PositionB, FLinearColor::White, true, 1.0f);
-	}
-
-	if(UWidgetBlueprintLibrary::IsDragDropping() && DrawDropLocation)
-	{
-		UInventoryItem* Payload = GetPayload(UWidgetBlueprintLibrary::GetDragDroppingContent());
-		if(IsRoomAvailableForPayload(Payload))
-		{
-			FPaintContext PaintContext = FPaintContext(AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
-			FVector2d Position = UKismetMathLibrary::Conv_IntPointToVector2D(DraggedItemTopLeftTile) * TileSize;
-			FVector2d Size = FVector2d(Payload->GetItemDimensions().X * TileSize, Payload->GetItemDimensions().Y * TileSize);
-			UWidgetBlueprintLibrary::DrawBox(PaintContext, Position, Size, SlateBrush, AvailableColor);
-		}
-		else
-		{
-			FPaintContext PaintContext = FPaintContext(AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
-			FVector2d Position = UKismetMathLibrary::Conv_IntPointToVector2D(DraggedItemTopLeftTile) * TileSize;
-			FVector2d Size = FVector2d(Payload->GetItemDimensions().X * TileSize, Payload->GetItemDimensions().Y * TileSize);
-			UWidgetBlueprintLibrary::DrawBox(PaintContext, Position, Size, SlateBrush, NotAvailableColor);
-		}
-	}
-	return Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle,
-	                          bParentEnabled);
-}
-
 void UInventoryGridWidget::MousePositionInTile(FVector2d MousePosition, bool& Right, bool& Down) const
 {
 	Right = FMath::Fmod(MousePosition.X, TileSize) > TileSize / 2.0f;
@@ -204,6 +172,17 @@ bool UInventoryGridWidget::IsRoomAvailableForPayload(UInventoryItem* Payload) co
 	}
 
 	return false;
+}
+
+UInventoryItem* UInventoryGridWidget::GetPayload() const
+{
+	UInventoryItem* Payload = Cast<UInventoryItem>(UWidgetBlueprintLibrary::GetDragDroppingContent()->Payload);
+	if(IsValid(Payload))
+	{
+		return Payload;
+	}
+
+	return nullptr;
 }
 
 UInventoryItem* UInventoryGridWidget::GetPayload(UDragDropOperation* DragDropOperation) const
@@ -260,5 +239,6 @@ void UInventoryGridWidget::Refresh()
 		ItemWidgetAsCanvasSlot->SetAutoSize(true);
 		FVector2d NewPosition = FVector2d(ItemMap.Value.X * TileSize - 5.0f, ItemMap.Value.Y * TileSize - 4.0f);
 		ItemWidgetAsCanvasSlot->SetPosition(NewPosition);
+		ItemWidgetAsCanvasSlot->SetZOrder(2);
 	}
 }

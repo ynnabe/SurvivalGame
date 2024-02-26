@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "SurvivalGame/Components/Inventory/Data/InventoryTypes.h"
 #include "Components/CanvasPanel.h"
 #include "Runtime\Engine\Classes\Slate\SlateBrushAsset.h"
 #include "InventoryGridWidget.generated.h"
 
+class UUSGLinesDrawer;
 class ASGPlayerController;
 class ASGPlayerCharacter;
 class UItemWidget;
@@ -37,9 +39,15 @@ public:
 	virtual FReply NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
-	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
-
 	UCanvasPanel* GetGridCanvasPanel() const { return GridCanvasPanel; }
+
+	UBorder* GetGridBorder() const { return GridBorder; }
+	bool GetDrawDropLocation() const { return DrawDropLocation; }
+	UInventoryItem* GetPayload() const;
+	UInventoryItem* GetPayload(UDragDropOperation* DragDropOperation) const;
+	bool IsDraggingDrop() const { return UWidgetBlueprintLibrary::IsDragDropping(); }
+	bool IsRoomAvailableForPayload(UInventoryItem* Payload) const;
+	FIntPoint GetDraggedItemToLeftTile() const { return DraggedItemTopLeftTile; }
 
 
 protected:
@@ -49,6 +57,9 @@ protected:
 	
 	UPROPERTY(meta=(BindWidget))
 	UCanvasPanel* GridCanvasPanel;
+
+	UPROPERTY(meta=(BindWidget))
+	UUSGLinesDrawer* LinesDrawer;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float TileSize;
@@ -71,13 +82,10 @@ protected:
 private:
 
 	FIntPoint DraggedItemTopLeftTile;
+	
 	bool DrawDropLocation = false;
 
 	void MousePositionInTile(FVector2d MousePosition, bool& Right, bool& Down) const;
-
-	bool IsRoomAvailableForPayload(UInventoryItem* Payload) const;
-
-	UInventoryItem* GetPayload(UDragDropOperation* DragDropOperation) const;
 
 	UFUNCTION()
 	void OnItemRemoved(UInventoryItem* ItemToRemove, bool bNeedToDrop);
